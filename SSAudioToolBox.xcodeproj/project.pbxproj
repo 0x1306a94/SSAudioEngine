@@ -16,10 +16,6 @@
 		3C65CC761F5002F3009F3FAC /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C65CC751F5002F2009F3FAC /* OpenGLES.framework */; };
 		3C65CC7A1F5005DD009F3FAC /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C65CC791F5005DD009F3FAC /* CoreAudio.framework */; };
 		3C65CD0C1F5124FC009F3FAC /* libstdc++.6.0.9.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C65CD0B1F5124FC009F3FAC /* libstdc++.6.0.9.tbd */; };
-		3C65CD671F5507B3009F3FAC /* t1.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 3C65CD661F5507B3009F3FAC /* t1.mp3 */; };
-		3C65CD691F552983009F3FAC /* 有一种爱叫做放手.flac in Resources */ = {isa = PBXBuildFile; fileRef = 3C65CD681F552983009F3FAC /* 有一种爱叫做放手.flac */; };
-		3C65CD6B1F552991009F3FAC /* 林俊杰 - 可惜没如果.wav in Resources */ = {isa = PBXBuildFile; fileRef = 3C65CD6A1F552991009F3FAC /* 林俊杰 - 可惜没如果.wav */; };
-		3C65CD6D1F552998009F3FAC /* t6.aac in Resources */ = {isa = PBXBuildFile; fileRef = 3C65CD6C1F552997009F3FAC /* t6.aac */; };
 		3C65CE091F5529AB009F3FAC /* NSString+SSURL.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C65CD711F5529AB009F3FAC /* NSString+SSURL.m */; };
 		3C65CE0A1F5529AB009F3FAC /* SSAudioEngineUtility.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C65CD741F5529AB009F3FAC /* SSAudioEngineUtility.m */; };
 		3C65CE0B1F5529AB009F3FAC /* SSAudioLocalDataProvider.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C65CD781F5529AB009F3FAC /* SSAudioLocalDataProvider.m */; };
@@ -37,6 +33,10 @@
 		3C65CE171F5529AB009F3FAC /* SSAudioDecoderPool.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C65CE021F5529AB009F3FAC /* SSAudioDecoderPool.m */; };
 		3C65CE181F5529AB009F3FAC /* SSAudioEngineRenderer.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C65CE051F5529AB009F3FAC /* SSAudioEngineRenderer.m */; };
 		3C65CE191F5529AB009F3FAC /* SSAudioStreamer.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C65CE081F5529AB009F3FAC /* SSAudioStreamer.m */; };
+		3C65CE1F1F553050009F3FAC /* t1.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 3C65CE1B1F553050009F3FAC /* t1.mp3 */; };
+		3C65CE201F553050009F3FAC /* t6.aac in Resources */ = {isa = PBXBuildFile; fileRef = 3C65CE1C1F553050009F3FAC /* t6.aac */; };
+		3C65CE211F553050009F3FAC /* 有一种爱叫做放手.flac in Resources */ = {isa = PBXBuildFile; fileRef = 3C65CE1D1F553050009F3FAC /* 有一种爱叫做放手.flac */; };
+		3C65CE221F553050009F3FAC /* 林俊杰 - 可惜没如果.wav in Resources */ = {isa = PBXBuildFile; fileRef = 3C65CE1E1F553050009F3FAC /* 林俊杰 - 可惜没如果.wav */; };
 		3C71E68D1F361A9B00AA8A13 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C71E68C1F361A9B00AA8A13 /* main.m */; };
 		3C71E6901F361A9B00AA8A13 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C71E68F1F361A9B00AA8A13 /* AppDelegate.m */; };
 		3C71E6931F361A9B00AA8A13 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C71E6921F361A9B00AA8A13 /* ViewController.m */; };
@@ -58,10 +58,6 @@
 		3C65CC7B1F5005E8009F3FAC /* CoreMotion.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMotion.framework; path = System/Library/Frameworks/CoreMotion.framework; sourceTree = SDKROOT; };
 		3C65CC7D1F5005F5009F3FAC /* GameController.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GameController.framework; path = System/Library/Frameworks/GameController.framework; sourceTree = SDKROOT; };
 		3C65CD0B1F5124FC009F3FAC /* libstdc++.6.0.9.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = "libstdc++.6.0.9.tbd"; path = "usr/lib/libstdc++.6.0.9.tbd"; sourceTree = SDKROOT; };
-		3C65CD661F5507B3009F3FAC /* t1.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = t1.mp3; sourceTree = "<group>"; };
-		3C65CD681F552983009F3FAC /* 有一种爱叫做放手.flac */ = {isa = PBXFileReference; lastKnownFileType = file; path = "有一种爱叫做放手.flac"; sourceTree = "<group>"; };
-		3C65CD6A1F552991009F3FAC /* 林俊杰 - 可惜没如果.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = "林俊杰 - 可惜没如果.wav"; sourceTree = "<group>"; };
-		3C65CD6C1F552997009F3FAC /* t6.aac */ = {isa = PBXFileReference; lastKnownFileType = file; path = t6.aac; sourceTree = "<group>"; };
 		3C65CD701F5529AB009F3FAC /* NSString+SSURL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+SSURL.h"; sourceTree = "<group>"; };
 		3C65CD711F5529AB009F3FAC /* NSString+SSURL.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+SSURL.m"; sourceTree = "<group>"; };
 		3C65CD721F5529AB009F3FAC /* SSAudioEngineCommon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSAudioEngineCommon.h; sourceTree = "<group>"; };
@@ -199,6 +195,10 @@
 		3C65CE061F5529AB009F3FAC /* SSAudioFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSAudioFile.h; sourceTree = "<group>"; };
 		3C65CE071F5529AB009F3FAC /* SSAudioStreamer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSAudioStreamer.h; sourceTree = "<group>"; };
 		3C65CE081F5529AB009F3FAC /* SSAudioStreamer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSAudioStreamer.m; sourceTree = "<group>"; };
+		3C65CE1B1F553050009F3FAC /* t1.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = t1.mp3; sourceTree = "<group>"; };
+		3C65CE1C1F553050009F3FAC /* t6.aac */ = {isa = PBXFileReference; lastKnownFileType = file; path = t6.aac; sourceTree = "<group>"; };
+		3C65CE1D1F553050009F3FAC /* 有一种爱叫做放手.flac */ = {isa = PBXFileReference; lastKnownFileType = file; path = "有一种爱叫做放手.flac"; sourceTree = "<group>"; };
+		3C65CE1E1F553050009F3FAC /* 林俊杰 - 可惜没如果.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = "林俊杰 - 可惜没如果.wav"; sourceTree = "<group>"; };
 		3C71E6891F361A9B00AA8A13 /* SSAudioToolBoxSample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SSAudioToolBoxSample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3C71E68C1F361A9B00AA8A13 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		3C71E68E1F361A9B00AA8A13 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -521,13 +521,21 @@
 			path = Renderer;
 			sourceTree = "<group>";
 		};
+		3C65CE1A1F553050009F3FAC /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				3C65CE1B1F553050009F3FAC /* t1.mp3 */,
+				3C65CE1C1F553050009F3FAC /* t6.aac */,
+				3C65CE1D1F553050009F3FAC /* 有一种爱叫做放手.flac */,
+				3C65CE1E1F553050009F3FAC /* 林俊杰 - 可惜没如果.wav */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
 		3C71E6701F3619FE00AA8A13 = {
 			isa = PBXGroup;
 			children = (
-				3C65CD6C1F552997009F3FAC /* t6.aac */,
-				3C65CD6A1F552991009F3FAC /* 林俊杰 - 可惜没如果.wav */,
-				3C65CD681F552983009F3FAC /* 有一种爱叫做放手.flac */,
-				3C65CD661F5507B3009F3FAC /* t1.mp3 */,
+				3C65CE1A1F553050009F3FAC /* Resources */,
 				3C65CD6E1F5529AB009F3FAC /* SSAudioEngine */,
 				3C71E68A1F361A9B00AA8A13 /* SSAudioToolBoxSample */,
 				3C71E67B1F3619FE00AA8A13 /* Products */,
@@ -647,13 +655,13 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3C65CE211F553050009F3FAC /* 有一种爱叫做放手.flac in Resources */,
+				3C65CE221F553050009F3FAC /* 林俊杰 - 可惜没如果.wav in Resources */,
+				3C65CE201F553050009F3FAC /* t6.aac in Resources */,
 				3C71E69B1F361A9B00AA8A13 /* LaunchScreen.storyboard in Resources */,
-				3C65CD6D1F552998009F3FAC /* t6.aac in Resources */,
-				3C65CD6B1F552991009F3FAC /* 林俊杰 - 可惜没如果.wav in Resources */,
+				3C65CE1F1F553050009F3FAC /* t1.mp3 in Resources */,
 				3C71E6981F361A9B00AA8A13 /* Assets.xcassets in Resources */,
 				3C71E6961F361A9B00AA8A13 /* Main.storyboard in Resources */,
-				3C65CD691F552983009F3FAC /* 有一种爱叫做放手.flac in Resources */,
-				3C65CD671F5507B3009F3FAC /* t1.mp3 in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
