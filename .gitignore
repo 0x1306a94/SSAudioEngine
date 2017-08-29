@@ -1,4 +1,8 @@
-
+*.mp3
+*.aac
+*.wav
+*.flac
+*.a
 # Created by https://www.gitignore.io/api/objective-c,macos
 
 ### macOS ###
