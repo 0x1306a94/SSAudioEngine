@@ -3,6 +3,7 @@
 *.wav
 *.flac
 *.a
+*.tar
 # Created by https://www.gitignore.io/api/objective-c,macos
 
 ### macOS ###
