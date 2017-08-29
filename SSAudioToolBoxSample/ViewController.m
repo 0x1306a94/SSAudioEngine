@@ -67,9 +67,7 @@
     [session setActive:YES error:&error] ;
     
 }
-
-- (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
-//    [self.download startOffset:1024 * 5000];
+- (IBAction)play:(UIButton *)sender {
     if (!self.streamer) {
         self.streamer = [[SSAudioStreamer alloc] initWithAudioFile:[[MusicModel alloc] init]];
         [self.streamer prepare];
