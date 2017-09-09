@@ -56,6 +56,12 @@
 //    SSAudioFileType type = [SSAudioHelper fetchAudioFileTypeWith:[MusicModel new]];
 //    NSLog(@"%d", type);
 //    NSLog(@"%f",[[NSDate date] timeIntervalSince1970] - [date timeIntervalSince1970]);
+    
+//    NSString *filePath = [[NSBundle mainBundle] pathForResource:@"林俊杰 - 可惜没如果.wav" ofType:nil];
+//    AVAudioFile *file = [[AVAudioFile alloc] initForReading:[NSURL fileURLWithPath:filePath] error:nil];
+//    AVAudioFormat *format = file.processingFormat;
+//    
+//    NSLog(@"%@", format);
 }
 
 - (void)viewDidAppear:(BOOL)animated {
