@@ -24,20 +24,8 @@
 ssfile_size_t offset = 0 ;
 ssfile_size_t file_size = 0 ;
 
-int ffmpeg_read_buffer(void *opaque, uint8_t *buf, int buf_size){
-//    SSAudioFFmpegDecoder *self = (__bridge SSAudioFFmpegDecoder *)opaque;
-//    if (self.decodeOffset >= self.readDataPool.totalReadDataSize) {
-//        return -1;
-//    }
-//    
-//    NSData *data = [self.readDataPool popReadData:buf_size];
-//    if (!data || data.length == 0) {
-//        return 0;
-//    }
-//    [data getBytes:buf range:NSMakeRange(0, data.length)];
-//    NSLog(@"ffmpeg_read_buffer 读取数据: %@", @(data.length).stringValue);
-//    return (int)data.length;
-    
+static int ffmpeg_read_buffer(void *opaque, uint8_t *buf, int buf_size){
+
     if(offset >= file_size)
         return -1 ;
     SSAudioFFmpegDecoder *this = (__bridge SSAudioFFmpegDecoder *)opaque ;
@@ -45,7 +33,7 @@ int ffmpeg_read_buffer(void *opaque, uint8_t *buf, int buf_size){
     NSData *data = [this.handle readDataOfLength:buf_size + offset > file_size ? (file_size - offset) : buf_size] ;
     [data getBytes:buf range:NSMakeRange(0, data.length)] ;
     offset += data.length ;
-//    NSLog(@"ffmpeg_read_buffer 已经读取:%ld",offset) ;
+    NSLog(@"ffmpeg_read_buffer 需要读取: %d 本次读取: %ld 总共读取:%ld 文件大小: %ld",buf_size, data.length, offset, file_size) ;
     return (int)data.length ;
 }
 
@@ -90,9 +78,10 @@ int ffmpeg_read_buffer(void *opaque, uint8_t *buf, int buf_size){
         self.hasStartDecode = NO;
        
         NSString *filePath = [[NSBundle mainBundle] pathForResource:@"林俊杰 - 可惜没如果.wav" ofType:nil];
-//        filePath = [[NSBundle mainBundle] pathForResource:@"t6.aac" ofType:nil];
+        filePath = [[NSBundle mainBundle] pathForResource:@"t6.aac" ofType:nil];
+        filePath = [[NSBundle mainBundle] pathForResource:@"t1.mp3" ofType:nil];
         filePath = [[NSBundle mainBundle] pathForResource:@"有一种爱叫做放手.flac" ofType:nil];
-//        filePath = [[NSBundle mainBundle] pathForResource:@"t1.mp3" ofType:nil];
+//        filePath = [[NSBundle mainBundle] pathForResource:@"期待爱(feat.金莎).ape" ofType:nil];
         _handle = [NSFileHandle fileHandleForReadingAtPath:filePath];
         file_size = [[[NSFileManager defaultManager] attributesOfItemAtPath:filePath error:nil][NSFileSize] unsignedLongLongValue] ;
     }
@@ -149,6 +138,11 @@ int ffmpeg_read_buffer(void *opaque, uint8_t *buf, int buf_size){
         NSLog(@"无法打开源....");
         return;
     }
+//    NSString *filePath = [[NSBundle mainBundle] pathForResource:@"爱笑的眼睛.ape" ofType:nil];
+//    if (avformat_open_input(&_formatCtx, [filePath UTF8String], NULL, NULL)) {
+//        NSLog(@"无法打开源....");
+//        return;
+//    }
     if (avformat_find_stream_info(_formatCtx, NULL) < 0) {
         NSLog(@"查找流失败...");
         return;
@@ -220,20 +214,25 @@ int ffmpeg_read_buffer(void *opaque, uint8_t *buf, int buf_size){
     
     av_packet_unref(&_packet);
     av_frame_unref(_temp_frame);
-    
-    while (!self.hasStopDecode && av_read_frame(_formatCtx, &_packet) >= 0) {
-        if (_packet.stream_index == _audio_stream_id) {
-            
-            if ([self putPacket:_packet] < 0) {
-                continue;
-            }
+    while (YES) {
+        if (self.hasStopDecode) {
+            break;
         }
-        
-        av_frame_unref(_temp_frame);
-        av_packet_unref(&_packet);
+        int ret = av_read_frame(_formatCtx, &_packet);
+        if (ret == 0) {
+            if (_packet.stream_index == _audio_stream_id) {
+                if ([self putPacket:_packet] < 0) {
+                    continue;
+                }
+            }
+            av_frame_unref(_temp_frame);
+            av_packet_unref(&_packet);
+        } else {
+            NSLog(@"av_read_frame error: %d", ret);
+            break;
+        }
     }
 }
-
 - (int)putPacket:(AVPacket)packet {
     
     if (packet.data == NULL) return 0;

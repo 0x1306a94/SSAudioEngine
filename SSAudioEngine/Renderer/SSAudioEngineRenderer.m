@@ -9,7 +9,14 @@
 #import "SSAudioEngineRenderer.h"
 #import "SSAudioEngineUtility.h"
 #import "SSAudioFrame.h"
+#import "SSAudioEngineCommon.h"
 #import <Accelerate/Accelerate.h>
+
+#if SSPLATFORM_TARGET_OS_MAC
+#import "SSMacAudioSession.h"
+#elif SSPLATFORM_TARGET_OS_IPHONE_OR_TV
+#import "SSAudioSession.h"
+#endif
 
 static int const max_frame_size = 4096;
 static int const max_chan = 2;
@@ -43,7 +50,11 @@ static NSError * checkError(OSStatus result, NSString * domain)
     float *_outData;
 }
 @property (nonatomic, assign) SSAudioOutputContext *outputContext;
-@property (nonatomic, strong) AVAudioSession *audioSession;
+#if SSPLATFORM_TARGET_OS_MAC
+@property (nonatomic, strong) SSMacAudioSession *audioSession;
+#elif SSPLATFORM_TARGET_OS_IPHONE_OR_TV
+@property (nonatomic, strong) SSAudioSession *audioSession;
+#endif
 @property (nonatomic, strong) NSError * error;
 @property (nonatomic, strong) NSError * warning;
 @property (nonatomic, assign) BOOL registered;
@@ -59,7 +70,11 @@ static NSError * checkError(OSStatus result, NSString * domain)
     return self;
 }
 - (void)prepare {
-    self.audioSession = [AVAudioSession sharedInstance];
+#if SGPLATFORM_TARGET_OS_MAC
+    self.audioSession = [SSMacAudioSession sharedInstance];
+#elif SGPLATFORM_TARGET_OS_IPHONE_OR_TV
+    self.audioSession = [SSAudioSession sharedInstance];
+#endif
     self->_outData = (float *)calloc(max_frame_size * max_chan, sizeof(float));
 }
 - (BOOL)registerAudioSession
@@ -69,8 +84,11 @@ static NSError * checkError(OSStatus result, NSString * domain)
             self.registered = YES;
         }
     }
+#if SGPLATFORM_TARGET_OS_MAC
+#elif SGPLATFORM_TARGET_OS_IPHONE_OR_TV
     [self.audioSession setCategory:AVAudioSessionCategoryPlayback error:nil];
     [self.audioSession setActive:YES error:nil];
+#endif
     return self.registered;
 }
 
@@ -128,7 +146,11 @@ static NSError * checkError(OSStatus result, NSString * domain)
     
     AudioComponentDescription mixerDescription;
     mixerDescription.componentType = kAudioUnitType_Mixer;
+#if SSPLATFORM_TARGET_OS_MAC
+    mixerDescription.componentSubType = kAudioUnitSubType_StereoMixer;
+#elif SSPLATFORM_TARGET_OS_IPHONE_OR_TV
     mixerDescription.componentSubType = kAudioUnitSubType_MultiChannelMixer;
+#endif
     mixerDescription.componentManufacturer = kAudioUnitManufacturer_Apple;
     result = AUGraphAddNode(self.outputContext->graph, &mixerDescription, &self.outputContext->mixerNodeContext.node);
     self.error = checkError(result, @"graph add mixer node error");
@@ -139,7 +161,11 @@ static NSError * checkError(OSStatus result, NSString * domain)
     
     AudioComponentDescription outputDescription;
     outputDescription.componentType = kAudioUnitType_Output;
+#if SSPLATFORM_TARGET_OS_MAC
+    outputDescription.componentSubType = kAudioUnitSubType_DefaultOutput;
+#elif SSPLATFORM_TARGET_OS_IPHONE_OR_TV
     outputDescription.componentSubType = kAudioUnitSubType_RemoteIO;
+#endif
     outputDescription.componentManufacturer = kAudioUnitManufacturer_Apple;
     result = AUGraphAddNode(self.outputContext->graph, &outputDescription, &self.outputContext->outputNodeContext.node);
     self.error = checkError(result, @"graph add output node error");
