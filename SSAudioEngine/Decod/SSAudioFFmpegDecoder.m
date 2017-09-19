@@ -296,44 +296,6 @@ int ffmpeg_read_buffer(void *opaque, uint8_t *buf, int buf_size){
         numberOfFrames = _temp_frame->nb_samples;
     }
     
-//    const int bufSize = av_samples_get_buffer_size(NULL,
-//                                                   _codec_context->channels,
-//                                                   _temp_frame->nb_samples,
-//                                                   _codec_context->sample_fmt,
-//                                                   1);
-//    const NSUInteger sizeOfS16 = 2;
-//    const NSUInteger numChannels = _codec_context->channels;
-//    int numFrames = bufSize / (sizeOfS16 * numChannels);
-//    
-//    SInt16 *s16p = (SInt16 *) _temp_frame->data[0];
-//    
-//    if (_audio_swr_context) {
-//        if (!_audio_swr_buffer || _audio_swr_buffer_size < (bufSize * 2)) {
-//            _audio_swr_buffer_size = bufSize * 2;
-//            _audio_swr_buffer = realloc(_audio_swr_buffer, _audio_swr_buffer_size);
-//        }
-//        
-//        Byte *outbuf[2] = {_audio_swr_buffer, 0};
-//        
-//        numFrames = swr_convert(_audio_swr_context,
-//                                outbuf,
-//                                numFrames * 2,
-//                                (const uint8_t **) _temp_frame->data,
-//                                numFrames);
-//        
-//        if (numFrames < 0) {
-//            NSLog(@"fail resample audio");
-//            return nil;
-//        }
-//        
-//        s16p = _audio_swr_buffer;
-//    }
-    
-//    const NSUInteger numElements = numFrames * numChannels;
-//    NSMutableData *data = [NSMutableData dataWithLength:numElements * sizeof(float)];
-//    vDSP_vflt16(s16p, 1, data.mutableBytes, 1, numElements);
-//    float scale = 1.0 / (float) INT16_MAX;
-//    vDSP_vsmul(data.mutableBytes, 1, &scale, data.mutableBytes, 1, numElements);
 
     const NSUInteger numElements = numberOfFrames * _codec_context->channels;
     NSMutableData *data = [NSMutableData dataWithLength:numElements * sizeof(float)];

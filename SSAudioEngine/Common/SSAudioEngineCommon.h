@@ -16,6 +16,6 @@
 typedef	unsigned long long		ssfile_size_t;
 #endif /* _SSFILE_SIZE_T */
 
-static NSInteger  const ffmpeg_audio_buffer_size = 1024 * 32;
+static NSInteger  const ffmpeg_audio_buffer_size = 1024 * 5;
 
 #endif /* SSAudioToolBoxCommon_h */
