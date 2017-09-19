@@ -32,7 +32,11 @@ static NSInteger const ffmpeg_audio_buffer_size = 1024 * 32;
 static NSInteger const ffmpeg_decode_pool_min_buffer_size = ffmpeg_audio_buffer_size;
 static NSInteger const ffmpeg_decode_pool_max_buffer_size = ffmpeg_audio_buffer_size * 5;
 #elif SSPLATFORM_TARGET_OS_IPHONE_OR_TV
-static NSInteger  const ffmpeg_audio_buffer_size = 1024;
+#if TARGET_IPHONE_SIMULATOR
+static NSInteger const ffmpeg_audio_buffer_size = 1024 * 5;
+#else
+static NSInteger const ffmpeg_audio_buffer_size = 1024;
+#endif
 static NSInteger const ffmpeg_decode_pool_min_buffer_size = ffmpeg_audio_buffer_size;
 static NSInteger const ffmpeg_decode_pool_max_buffer_size = ffmpeg_audio_buffer_size * 10;
 #endif
