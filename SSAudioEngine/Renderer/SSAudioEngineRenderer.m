@@ -416,7 +416,10 @@ static NSError * checkError(OSStatus result, NSString * domain)
         memset(ioData->mBuffers[iBuffer].mData, 0, ioData->mBuffers[iBuffer].mDataByteSize);
     }
     
-    [self.delegate audioEngineRendererNeedFrameData:self outputData:self->_outData numberOfFrames:numberOfFrames numberOfChannels:self.numberOfChannels];
+    [self.delegate audioEngineRendererNeedFrameData:self
+                                         outputData:self->_outData
+                                     numberOfFrames:numberOfFrames
+                                   numberOfChannels:self.numberOfChannels];
     
     UInt32 numBytesPerSample = self.outputContext->commonFormat.mBitsPerChannel / 8;
     if (numBytesPerSample == 4) {

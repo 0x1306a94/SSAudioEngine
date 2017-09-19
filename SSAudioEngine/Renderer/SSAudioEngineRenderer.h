@@ -18,7 +18,10 @@
 @protocol SSAudioEngineRendererDelegate <NSObject>
 
 @required
-- (void)audioEngineRendererNeedFrameData:(SSAudioEngineRenderer *)renderer outputData:(float *)outputData numberOfFrames:(UInt32)numberOfFrames numberOfChannels:(UInt32)numberOfChannels ;
+- (void)audioEngineRendererNeedFrameData:(SSAudioEngineRenderer *)renderer
+                              outputData:(float *)outputData
+                          numberOfFrames:(UInt32)numberOfFrames
+                        numberOfChannels:(UInt32)numberOfChannels;
 
 @end
 

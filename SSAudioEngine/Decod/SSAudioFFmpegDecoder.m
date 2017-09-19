@@ -33,8 +33,13 @@ static int ffmpeg_read_buffer(void *opaque, uint8_t *buf, int buf_size){
     NSData *data = [this.handle readDataOfLength:buf_size + offset > file_size ? (file_size - offset) : buf_size] ;
     [data getBytes:buf range:NSMakeRange(0, data.length)] ;
     offset += data.length ;
-    NSLog(@"ffmpeg_read_buffer 需要读取: %d 本次读取: %ld 总共读取:%ld 文件大小: %ld",buf_size, data.length, offset, file_size) ;
+    NSLog(@"ffmpeg_read_buffer 需要读取: %d 本次读取: %ld 总共读取:%llu 文件大小: %llu",buf_size, data.length, offset, file_size) ;
     return (int)data.length ;
+}
+
+static int64_t ffmpeg_seek_buffer(void *opaque, int64_t offset, int whence) {
+    
+    return 0;
 }
 
 @interface SSAudioFFmpegDecoder ()
@@ -63,7 +68,7 @@ static int ffmpeg_read_buffer(void *opaque, uint8_t *buf, int buf_size){
     int                     _audio_swr_buffer_size;
 }
 
-+ (void)load {
++ (void)initialize {
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         av_register_all();
@@ -89,7 +94,15 @@ static int ffmpeg_read_buffer(void *opaque, uint8_t *buf, int buf_size){
 {
     _samplingRate = 44100;
     _channelCount = 2;
-    _audio_swr_context = swr_alloc_set_opts(NULL, av_get_default_channel_layout(_channelCount), AV_SAMPLE_FMT_S16, _samplingRate, av_get_default_channel_layout(_codec_context->channels), _codec_context->sample_fmt, _codec_context->sample_rate, 0, NULL);
+    _audio_swr_context = swr_alloc_set_opts(NULL,
+                                            av_get_default_channel_layout(_channelCount),
+                                            AV_SAMPLE_FMT_S16,
+                                            _samplingRate,
+                                            av_get_default_channel_layout(_codec_context->channels),
+                                            _codec_context->sample_fmt,
+                                            _codec_context->sample_rate,
+                                            0,
+                                            NULL);
     
     int result = swr_init(_audio_swr_context);
     NSError * error = SSFFCheckError(result);
@@ -130,7 +143,7 @@ static int ffmpeg_read_buffer(void *opaque, uint8_t *buf, int buf_size){
                                     (__bridge void *)self,
                                     ffmpeg_read_buffer,
                                     NULL,
-                                    NULL);
+                                    ffmpeg_seek_buffer);
     _formatCtx->pb = _ioContext;
     if (avformat_open_input(&_formatCtx, NULL, NULL, NULL)) {
         NSLog(@"无法打开源....");
@@ -294,11 +307,11 @@ static int ffmpeg_read_buffer(void *opaque, uint8_t *buf, int buf_size){
     audioFrame->data = malloc([data length]);
     memcpy(audioFrame->data, [data bytes], [data length]);
     
-    audioFrame->length = [data length];
+    audioFrame->length = (int)[data length];
     audioFrame->output_offset = 0;
     AudioStreamPacketDescription packetDescription  ;
     packetDescription.mStartOffset = 0 ;
-    packetDescription.mDataByteSize = [data length] ;
+    packetDescription.mDataByteSize = (UInt32)[data length];
     packetDescription.mVariableFramesInPacket = 0 ;
     audioFrame->asbd = packetDescription;
     audioFrame.position = av_frame_get_best_effort_timestamp(_temp_frame) * _timebase;
