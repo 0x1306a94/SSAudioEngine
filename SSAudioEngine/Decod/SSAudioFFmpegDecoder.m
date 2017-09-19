@@ -48,7 +48,6 @@ static int ffmpeg_read_buffer(void *opaque, uint8_t *buf, int buf_size){
     AVFormatContext         *_formatCtx;
     AVIOContext             *_ioContext;
     AVStream                *_stream;
-    AVCodecParameters       *_codecParameters;
     AVCodecContext          *_codec_context;
     AVCodec                 *_code;
     int                     _audio_stream_id;
@@ -76,12 +75,11 @@ static int ffmpeg_read_buffer(void *opaque, uint8_t *buf, int buf_size){
         self.hasHeaderComplete = NO;
         self.hasStopDecode = NO;
         self.hasStartDecode = NO;
-       
+        
         NSString *filePath = [[NSBundle mainBundle] pathForResource:@"林俊杰 - 可惜没如果.wav" ofType:nil];
 //        filePath = [[NSBundle mainBundle] pathForResource:@"t6.aac" ofType:nil];
-//        filePath = [[NSBundle mainBundle] pathForResource:@"t1.mp3" ofType:nil];
         filePath = [[NSBundle mainBundle] pathForResource:@"有一种爱叫做放手.flac" ofType:nil];
-//        filePath = [[NSBundle mainBundle] pathForResource:@"期待爱(feat.金莎).ape" ofType:nil];
+//        filePath = [[NSBundle mainBundle] pathForResource:@"t1.mp3" ofType:nil];
         _handle = [NSFileHandle fileHandleForReadingAtPath:filePath];
         file_size = [[[NSFileManager defaultManager] attributesOfItemAtPath:filePath error:nil][NSFileSize] unsignedLongLongValue] ;
     }
@@ -138,11 +136,6 @@ static int ffmpeg_read_buffer(void *opaque, uint8_t *buf, int buf_size){
         NSLog(@"无法打开源....");
         return;
     }
-//    NSString *filePath = [[NSBundle mainBundle] pathForResource:@"爱笑的眼睛.ape" ofType:nil];
-//    if (avformat_open_input(&_formatCtx, [filePath UTF8String], NULL, NULL)) {
-//        NSLog(@"无法打开源....");
-//        return;
-//    }
     if (avformat_find_stream_info(_formatCtx, NULL) < 0) {
         NSLog(@"查找流失败...");
         return;
@@ -185,7 +178,7 @@ static int ffmpeg_read_buffer(void *opaque, uint8_t *buf, int buf_size){
     NSLog(@"code_name: %s", _codec_context->codec->name);
     NSLog(@"extra data size: %d", _codec_context->extradata_size);
     NSLog(@"block_align: %d", _codec_context->block_align);
-
+    
     if (_codec_context->bit_rate <= 0) {
         if (_formatCtx->duration <= 0) {
             _bit_rate = 900000;
@@ -214,25 +207,20 @@ static int ffmpeg_read_buffer(void *opaque, uint8_t *buf, int buf_size){
     
     av_packet_unref(&_packet);
     av_frame_unref(_temp_frame);
-    while (YES) {
-        if (self.hasStopDecode) {
-            break;
-        }
-        int ret = av_read_frame(_formatCtx, &_packet);
-        if (ret == 0) {
-            if (_packet.stream_index == _audio_stream_id) {
-                if ([self putPacket:_packet] < 0) {
-                    continue;
-                }
+    
+    while (!self.hasStopDecode && av_read_frame(_formatCtx, &_packet) >= 0) {
+        if (_packet.stream_index == _audio_stream_id) {
+            
+            if ([self putPacket:_packet] < 0) {
+                continue;
             }
-            av_frame_unref(_temp_frame);
-            av_packet_unref(&_packet);
-        } else {
-            NSLog(@"av_read_frame error: %d", ret);
-            break;
         }
+        
+        av_frame_unref(_temp_frame);
+        av_packet_unref(&_packet);
     }
 }
+
 - (int)putPacket:(AVPacket)packet {
     
     if (packet.data == NULL) return 0;
@@ -295,7 +283,7 @@ static int ffmpeg_read_buffer(void *opaque, uint8_t *buf, int buf_size){
         numberOfFrames = _temp_frame->nb_samples;
     }
     
-
+    
     const NSUInteger numElements = numberOfFrames * _codec_context->channels;
     NSMutableData *data = [NSMutableData dataWithLength:numElements * sizeof(float)];
     vDSP_vflt16(audioDataBuffer, 1, data.mutableBytes, 1, numElements);
@@ -315,7 +303,7 @@ static int ffmpeg_read_buffer(void *opaque, uint8_t *buf, int buf_size){
     audioFrame->asbd = packetDescription;
     audioFrame.position = av_frame_get_best_effort_timestamp(_temp_frame) * _timebase;
     audioFrame.duration = av_frame_get_pkt_duration(_temp_frame) * _timebase;
-
+    
     if (audioFrame.duration == 0) {
         audioFrame.duration = audioFrame->length / (sizeof(float) * _channelCount * _samplingRate);
     }

@@ -70,9 +70,9 @@ static NSError * checkError(OSStatus result, NSString * domain)
     return self;
 }
 - (void)prepare {
-#if SGPLATFORM_TARGET_OS_MAC
+#if SSPLATFORM_TARGET_OS_MAC
     self.audioSession = [SSMacAudioSession sharedInstance];
-#elif SGPLATFORM_TARGET_OS_IPHONE_OR_TV
+#elif SSPLATFORM_TARGET_OS_IPHONE_OR_TV
     self.audioSession = [SSAudioSession sharedInstance];
 #endif
     self->_outData = (float *)calloc(max_frame_size * max_chan, sizeof(float));
@@ -84,8 +84,8 @@ static NSError * checkError(OSStatus result, NSString * domain)
             self.registered = YES;
         }
     }
-#if SGPLATFORM_TARGET_OS_MAC
-#elif SGPLATFORM_TARGET_OS_IPHONE_OR_TV
+#if SSPLATFORM_TARGET_OS_MAC
+#elif SSPLATFORM_TARGET_OS_IPHONE_OR_TV
     [self.audioSession setCategory:AVAudioSessionCategoryPlayback error:nil];
     [self.audioSession setActive:YES error:nil];
 #endif
@@ -396,14 +396,14 @@ static NSError * checkError(OSStatus result, NSString * domain)
 - (void)delegateErrorCallback
 {
     if (self.error) {
-        NSLog(@"SGAudioManager did error : %@", self.error);
+        NSLog(@"SSAudioManager did error : %@", self.error);
     }
 }
 
 - (void)delegateWarningCallback
 {
     if (self.warning) {
-        NSLog(@"SGAudioManager did warning : %@", self.warning);
+        NSLog(@"SSAudioManager did warning : %@", self.warning);
     }
 }
 

@@ -47,8 +47,8 @@
     
     self.decoderPool = [[SSAudioDecoderPool alloc] init];
     self.decoderPool.delegaet = self;
-    self.decoderPool.minBufferSize = ffmpeg_audio_buffer_size;
-    self.decoderPool.maxBufferSize = ffmpeg_audio_buffer_size * 5;
+    self.decoderPool.minBufferSize = ffmpeg_decode_pool_min_buffer_size;
+    self.decoderPool.maxBufferSize = ffmpeg_decode_pool_max_buffer_size;
     
 //    [self.provider startReade];
     
