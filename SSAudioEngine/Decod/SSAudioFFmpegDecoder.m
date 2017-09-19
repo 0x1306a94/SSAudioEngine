@@ -39,7 +39,7 @@ static int ffmpeg_read_buffer(void *opaque, uint8_t *buf, int buf_size){
 
 static int64_t ffmpeg_seek_buffer(void *opaque, int64_t offset, int whence) {
     
-    return 0;
+    return whence;
 }
 
 @interface SSAudioFFmpegDecoder ()
@@ -81,10 +81,11 @@ static int64_t ffmpeg_seek_buffer(void *opaque, int64_t offset, int whence) {
         self.hasStopDecode = NO;
         self.hasStartDecode = NO;
         
-        NSString *filePath = [[NSBundle mainBundle] pathForResource:@"林俊杰 - 可惜没如果.wav" ofType:nil];
-//        filePath = [[NSBundle mainBundle] pathForResource:@"t6.aac" ofType:nil];
-        filePath = [[NSBundle mainBundle] pathForResource:@"有一种爱叫做放手.flac" ofType:nil];
+        NSString *filePath = [[NSBundle mainBundle] pathForResource:@"林俊杰-可惜没如果.wav" ofType:nil];
+        filePath = [[NSBundle mainBundle] pathForResource:@"t6.aac" ofType:nil];
+//        filePath = [[NSBundle mainBundle] pathForResource:@"有一种爱叫做放手.flac" ofType:nil];
 //        filePath = [[NSBundle mainBundle] pathForResource:@"t1.mp3" ofType:nil];
+//        filePath = [[NSBundle mainBundle] pathForResource:@"期待爱(feat.金莎).ape" ofType:nil];
         _handle = [NSFileHandle fileHandleForReadingAtPath:filePath];
         file_size = [[[NSFileManager defaultManager] attributesOfItemAtPath:filePath error:nil][NSFileSize] unsignedLongLongValue] ;
     }
@@ -143,8 +144,10 @@ static int64_t ffmpeg_seek_buffer(void *opaque, int64_t offset, int whence) {
                                     (__bridge void *)self,
                                     ffmpeg_read_buffer,
                                     NULL,
-                                    ffmpeg_seek_buffer);
+                                    NULL);
     _formatCtx->pb = _ioContext;
+    AVInputFormat *iformat = NULL;
+    int ret = av_probe_input_buffer2(_ioContext, &iformat, NULL, NULL, 0, 0);
     if (avformat_open_input(&_formatCtx, NULL, NULL, NULL)) {
         NSLog(@"无法打开源....");
         return;
@@ -221,7 +224,16 @@ static int64_t ffmpeg_seek_buffer(void *opaque, int64_t offset, int whence) {
     av_packet_unref(&_packet);
     av_frame_unref(_temp_frame);
     
-    while (!self.hasStopDecode && av_read_frame(_formatCtx, &_packet) >= 0) {
+    while (YES) {
+        if (self.hasStopDecode) {
+            break;
+        }
+        
+        int ret = av_read_frame(_formatCtx, &_packet);
+        if (ret != 0) {
+            NSLog(@"av_read_frame error: %d", ret);
+            break;
+        }
         if (_packet.stream_index == _audio_stream_id) {
             
             if ([self putPacket:_packet] < 0) {
