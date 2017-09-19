@@ -78,8 +78,8 @@ static int ffmpeg_read_buffer(void *opaque, uint8_t *buf, int buf_size){
         self.hasStartDecode = NO;
        
         NSString *filePath = [[NSBundle mainBundle] pathForResource:@"林俊杰 - 可惜没如果.wav" ofType:nil];
-        filePath = [[NSBundle mainBundle] pathForResource:@"t6.aac" ofType:nil];
-        filePath = [[NSBundle mainBundle] pathForResource:@"t1.mp3" ofType:nil];
+//        filePath = [[NSBundle mainBundle] pathForResource:@"t6.aac" ofType:nil];
+//        filePath = [[NSBundle mainBundle] pathForResource:@"t1.mp3" ofType:nil];
         filePath = [[NSBundle mainBundle] pathForResource:@"有一种爱叫做放手.flac" ofType:nil];
 //        filePath = [[NSBundle mainBundle] pathForResource:@"期待爱(feat.金莎).ape" ofType:nil];
         _handle = [NSFileHandle fileHandleForReadingAtPath:filePath];

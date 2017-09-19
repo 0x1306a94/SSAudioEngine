@@ -18,14 +18,12 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-
-    // Do any additional setup after loading the view.
-    dispatch_async(dispatch_get_global_queue(0, 0), ^{
-        if (!self.streamer) {
-            self.streamer = [[SSAudioStreamer alloc] initWithAudioFile:[[MusicModel alloc] init]];
-            [self.streamer prepare];
-        }
-    });
+}
+- (IBAction)play:(NSButton *)sender {
+    if (!self.streamer) {
+        self.streamer = [[SSAudioStreamer alloc] initWithAudioFile:[[MusicModel alloc] init]];
+        [self.streamer prepare];
+    }
 }
 
 @end

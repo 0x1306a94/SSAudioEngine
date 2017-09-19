@@ -26,6 +26,10 @@ typedef	unsigned long long		ssfile_size_t;
 #define SSPLATFORM_TARGET_OS_MAC_OR_TV          (SSPLATFORM_TARGET_OS_MAC || SSPLATFORM_TARGET_OS_TV)
 #define SSPLATFORM_TARGET_OS_IPHONE_OR_TV       (SSPLATFORM_TARGET_OS_IPHONE || SSPLATFORM_TARGET_OS_TV)
 
+#if SSPLATFORM_TARGET_OS_MAC
+static NSInteger  const ffmpeg_audio_buffer_size = 1024 * 32;
+#elif SSPLATFORM_TARGET_OS_IPHONE_OR_TV
 static NSInteger  const ffmpeg_audio_buffer_size = 1024;
+#endif
 
 #endif /* SSAudioToolBoxCommon_h */
