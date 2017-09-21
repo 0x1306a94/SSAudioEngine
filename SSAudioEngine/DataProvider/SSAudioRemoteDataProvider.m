@@ -45,8 +45,8 @@
     }
     [self _mutexInit];
     self.download = [[SSAudioDownload alloc] initWithURL:self.audioFile.ss_audioURL delegate:self];
-    [self.download start];
     self.handle = [NSFileHandle fileHandleForReadingAtPath:self.download.savePath];
+    [self.download start];
 }
 - (void)_mutexInit{
     pthread_mutex_init(&_mutex, NULL);

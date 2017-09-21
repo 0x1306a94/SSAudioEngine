@@ -46,9 +46,11 @@
     self.decoderPool.delegaet = self;
     self.decoderPool.minBufferSize = ffmpeg_decode_pool_min_buffer_size;
     self.decoderPool.maxBufferSize = ffmpeg_decode_pool_max_buffer_size;
-    
-//    self.provider = [SSAudioRemoteDataProvider dataProviderWithAudioFile:self.audioFile];
-    self.provider = [SSAudioLocalDataProvider dataProviderWithAudioFile:self.audioFile];
+    if ([[self.audioFile ss_audioURL] isFileURL]) {
+        self.provider = [SSAudioLocalDataProvider dataProviderWithAudioFile:self.audioFile];
+    } else {
+        self.provider = [SSAudioRemoteDataProvider dataProviderWithAudioFile:self.audioFile];
+    }
     self.provider.delegate = self;
     
     

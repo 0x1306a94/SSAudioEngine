@@ -163,6 +163,9 @@ static void _CFReadStreamClientCallback(CFReadStreamRef stream, CFStreamEventTyp
             if (self.delegate && [self.delegate respondsToSelector:@selector(audioDownload:didFetchFileSize:)]) {
                 [self.delegate audioDownload:self didFetchFileSize:_responseContentLength];
             }
+            if (self.totalCount == self.totalDownloadCount) {
+                [self downloadComplete];
+            }
         }
     }
     return self;
