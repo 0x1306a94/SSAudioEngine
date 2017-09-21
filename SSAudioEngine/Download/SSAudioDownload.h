@@ -13,11 +13,7 @@
 FOUNDATION_EXTERN ssfile_size_t const kFileInfoMapSacleValue;
 
 @class SSAudioDownload;
-
-typedef void(^SSAudioDownloadDidReceiveResponseHeaders)(NSDictionary *headers);
-typedef void(^SSAudioDownloadDidReceiveData)(NSData *data);
-typedef void(^SSAudioDownloadProgress)(double progress);
-typedef void(^SSAudioDownloadDidCompleted)();
+@protocol SSAudioDownloadDelegate;
 
 @interface SSAudioDownload : NSObject
 /** 超时时间 */
@@ -40,8 +36,36 @@ typedef void(^SSAudioDownloadDidCompleted)();
 @property (nonatomic, assign, readonly) BOOL completeDownload;
 /** 缓存文件地址 */
 @property (nonatomic, strong, readonly) NSString *savePath;
-- (instancetype)initWithURL:(NSURL *)url;
+
+
+@property (nonatomic, assign, readonly) ssfile_size_t totalDownloadCount;
+@property (nonatomic, assign, readonly) ssfile_size_t totalCount;
+
+/**
+ 当次下载数量
+ */
+@property (nonatomic, assign, readonly) ssfile_size_t currentDownloadCount;
+/** 尾数值  */
+@property (nonatomic, assign, readonly) ssfile_size_t mantissaSize;
+
+/**
+ 是否已经下载了尾数值
+ */
+@property (nonatomic, assign, readonly) BOOL mantissaState;
+@property (nonatomic, weak) id<SSAudioDownloadDelegate> delegate;
+- (instancetype)initWithURL:(NSURL *)url delegate:(id<SSAudioDownloadDelegate>)delegate;
 - (void)start;
 - (void)seek:(ssfile_size_t)offset;
 - (void)stop;
+@end
+
+@protocol SSAudioDownloadDelegate <NSObject>
+
+@optional
+- (void)audioDownload:(SSAudioDownload *)audioDownload didFetchFileSize:(ssfile_size_t)fileSize;
+- (void)audioDownload:(SSAudioDownload *)audioDownload didFetchResponseHeaders:(NSDictionary *)responseHeaders;
+- (void)audioDownload:(SSAudioDownload *)audioDownload didReceiveData:(NSData *)data;
+- (void)audioDownload:(SSAudioDownload *)audioDownload didUpdateProgress:(float)progress;
+- (void)audioDownload:(SSAudioDownload *)audioDownload didUpdateDownloadSpeed:(NSInteger)downloadSpeed;
+- (void)audioDownloadDidCompleted:(SSAudioDownload *)audioDownload;
 @end

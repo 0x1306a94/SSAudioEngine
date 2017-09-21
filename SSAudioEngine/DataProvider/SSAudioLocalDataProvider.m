@@ -16,7 +16,6 @@
 @interface SSAudioLocalDataProvider ()
 @property (nonatomic, strong) NSFileHandle *handle;
 @property (nonatomic, assign) ssfile_size_t loc;
-@property (nonatomic, assign) ssfile_size_t len;
 @property (nonatomic, assign) BOOL stop;
 @property (nonatomic, assign) BOOL read;
 @end
@@ -29,56 +28,40 @@
         NSString *path = [[[audioFile ss_audioURL] absoluteString] URLDecodeString];
         path = [path stringByReplacingOccurrencesOfString:@"file://" withString:@""];
         provider.handle = [NSFileHandle fileHandleForReadingAtPath:path];
-        provider.fileSize = ss_fileSize(path);
+        provider.fileSize = [[[NSFileManager defaultManager] attributesOfItemAtPath:path error:nil][NSFileSize] unsignedLongLongValue];
         provider.loc = 0;
-        provider.len = 1024;
         provider.stop = NO;
         provider.read = NO;
     }
     return provider;
 }
-
-- (void)startReade {
-    @synchronized (self) {
-        if (self.read) {
-            return;
-        }
-        [NSThread detachNewThreadSelector:@selector(readFile) toTarget:self withObject:nil];
-        self.read = YES;
-        self.stop = NO;
+- (void)prepare {
+    
+    if (self.delegate && [self.delegate respondsToSelector:@selector(audioDataProviderDidPrepare:)]) {
+        [self.delegate audioDataProviderDidPrepare:self];
     }
 }
-- (void)stopReade {
-    @synchronized (self) {
-        self.stop = YES;
-        self.read = NO;
-        NSLog(@"SSAudioLocalDataProvider 停止读取...");
+- (int)readDataWithLength:(int)length bytes:(NSData **)dataBuffer {
+    
+    if (self.loc >= self.fileSize) {
+        NSLog(@"文件读取完毕");
+        return -1;
     }
-}
-
-- (void)readFile {
-    NSThread *thread = [NSThread currentThread];
-    thread.name = @"com.king129.SSAudioDataProvider.thread";
-    NSLog(@"thread: %@", thread);
-    while (self.fileSize > self.loc && !self.stop) {
-        @autoreleasepool {
-            NSInteger readLen = 0;
-            if (self.fileSize >= self.loc + self.len) {
-                readLen = self.len;
-            } else {
-                readLen = self.fileSize - self.loc;
-                if (readLen > self.len) {
-                    readLen = self.len;
-                }
-            }
-            [self.handle seekToFileOffset:self.loc];
-            NSData *data = [self.handle readDataOfLength:readLen];
-            if (data && data.length > 0) {
-                NSLog(@"SSAudioLocalDataProvider 读取数据: %ld", data.length);
-                self.loc += readLen;
-                !self.delegaete ? : [self.delegaete audioDataProviderDelegate:self didReadData:data];
-            }
-        }
+    // 计算可读数据长度
+    int realLen = 0;
+    if ((self.loc + length) > self.fileSize) {
+        realLen = self.fileSize - self.loc;
+    } else {
+        realLen = length;
     }
+    
+    [self.handle seekToFileOffset:self.loc];
+    NSData *data = [self.handle readDataOfLength:realLen];
+    if (!data || [data length] == 0) {
+        return 0;
+    }
+    *dataBuffer = data;
+    self.loc += realLen;
+    return realLen;
 }
 @end

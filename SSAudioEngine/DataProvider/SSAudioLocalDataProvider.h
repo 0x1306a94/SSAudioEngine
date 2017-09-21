@@ -10,13 +10,15 @@
 #import "SSAudioEngineCommon.h"
 
 @protocol SSAudioDataProvider;
-@protocol SSAudioFile;
 @protocol SSAudioDataProviderDelegate;
+@protocol SSAudioFile;
 
 @interface SSAudioLocalDataProvider : NSObject<SSAudioDataProvider>
 @property (nonatomic, assign) ssfile_size_t fileSize;
 @property (nonatomic, strong) id<SSAudioFile> audioFile;
-@property (nonatomic, strong) id<SSAudioDataProviderDelegate> delegaete;
+@property (nonatomic, assign, readonly) ssfile_size_t loc;
+@property (nonatomic, weak) id<SSAudioDataProviderDelegate> delegate;
+
 + (id<SSAudioDataProvider>)dataProviderWithAudioFile:(id<SSAudioFile>)audioFile;
 - (void)startReade;
 - (void)stopReade;

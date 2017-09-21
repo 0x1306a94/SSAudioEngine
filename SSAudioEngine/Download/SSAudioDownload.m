@@ -24,7 +24,7 @@ static NSString *const kFileHaveDownloadedCountKey      = @"kFileHaveDownloadedC
 // 是否已经下载了尾数值
 static NSString *const kFileDownloadMantissaKey         = @"kFileDownloadMantissaKey";
 // 是否已经完整下载
-static NSString *const kFileCompleteDownloadKey            = @"kFileCompleteDownloadKey";
+static NSString *const kFileCompleteDownloadKey         = @"kFileCompleteDownloadKey";
 /**
  数据回调
  
@@ -51,7 +51,6 @@ static void _CFReadStreamClientCallback(CFReadStreamRef stream, CFStreamEventTyp
 
 @property (nonatomic, assign) ssfile_size_t startOffset;
 @property (nonatomic, assign) ssfile_size_t endOffset;
-@property (nonatomic, assign) ssfile_size_t downloadedCount;
 
 @property (nonatomic, strong) NSMutableData *tmpData;
 @property (nonatomic, assign) ssfile_size_t totalDownloadCount;
@@ -93,7 +92,7 @@ static void _CFReadStreamClientCallback(CFReadStreamRef stream, CFStreamEventTyp
         [runLoop run];
     }
 }
-- (instancetype)initWithURL:(NSURL *)url {
+- (instancetype)initWithURL:(NSURL *)url delegate:(id<SSAudioDownloadDelegate>)delegate {
     NSParameterAssert(url);
     if (!url) { return nil; }
     if (self == [super init]) {
@@ -105,6 +104,7 @@ static void _CFReadStreamClientCallback(CFReadStreamRef stream, CFStreamEventTyp
         _startOffset = 0;
         _endOffset = 0;
         _responseContentLength = 0;
+        self.delegate = delegate;
     }
     return [self prepare];
 }
@@ -160,6 +160,9 @@ static void _CFReadStreamClientCallback(CFReadStreamRef stream, CFStreamEventTyp
             NSLog(@"总大小: %@", @(self.totalCount).stringValue);
             NSLog(@"responseContentLength: %@", @(_responseContentLength).stringValue);
             NSLog(@"%@", [self.fileManager attributesOfItemAtPath:self.savePath error:nil]);
+            if (self.delegate && [self.delegate respondsToSelector:@selector(audioDownload:didFetchFileSize:)]) {
+                [self.delegate audioDownload:self didFetchFileSize:_responseContentLength];
+            }
         }
     }
     return self;
@@ -234,7 +237,7 @@ static void _CFReadStreamClientCallback(CFReadStreamRef stream, CFStreamEventTyp
     if (_responseContentLength == 0) {
         return NO;
     }
-    if (!_completeDownload) {
+    if (_completeDownload) {
         return YES;
     }
     ssfile_size_t fileSize = ss_fileSize(self.infoPath);
@@ -242,7 +245,7 @@ static void _CFReadStreamClientCallback(CFReadStreamRef stream, CFStreamEventTyp
     ssfile_size_t start = 0;
     ssfile_size_t startVal = 0;
     BOOL b = YES;
-    for (; ;) {
+    for (;;) {
         if (start >= fileSize) {
             b = YES;
             break;
@@ -320,6 +323,7 @@ static void _CFReadStreamClientCallback(CFReadStreamRef stream, CFStreamEventTyp
     }
     if ([self checkIntegrity]) {
         NSLog(@"已经下载完成....不需要再下载");
+        [self downloadComplete];
         return;
     }
     if (!isSkipFindStartOffset || ![isSkipFindStartOffset boolValue]) {
@@ -425,35 +429,45 @@ static void _CFReadStreamClientCallback(CFReadStreamRef stream, CFStreamEventTyp
                 self.totalDownloadCount++;
                 self.currentDownloadCount++;
                 NSLog(@"downloadCount: %@", @(self.totalDownloadCount).stringValue);
+                
+                ss_extendedFileAttribute(self.savePath, kFileHaveDownloadedCountKey, @(self.totalDownloadCount * kFileInfoMapSacleValue).stringValue);
+                if (self.delegate && [self.delegate respondsToSelector:@selector(audioDownload:didReceiveData:)]) {
+                    [self.delegate audioDownload:self didReceiveData:[self.tmpData copy]];
+                }
                 [self.tmpData resetBytesInRange:NSMakeRange(0, kFileInfoMapSacleValue)];
                 self.tmpData = nil;
                 self.tmpData = [NSMutableData data];
-                
-                ss_extendedFileAttribute(self.savePath, kFileHaveDownloadedCountKey, @(self.totalDownloadCount * kFileInfoMapSacleValue).stringValue);
                 [self updateProgress];
                 
             } else if (self.totalDownloadCount == self.totalCount && bytesRead == self.mantissaSize) {
                 // 尾数值下载完
                 [self.audioDataHandle seekToFileOffset:self.totalDownloadCount * kFileInfoMapSacleValue];
                 [self.audioDataHandle writeData:self.tmpData.copy];
-                self.tmpData = nil;
                 ss_extendedFileAttribute(self.savePath, kFileHaveDownloadedCountKey, @(self.totalDownloadCount * kFileInfoMapSacleValue + bytesRead).stringValue);
                 ss_extendedFileAttribute(self.savePath, kFileDownloadMantissaKey, @(YES).stringValue);
                 ss_extendedFileAttribute(self.savePath, kFileCompleteDownloadKey, @(YES).stringValue);
+                if (self.delegate && [self.delegate respondsToSelector:@selector(audioDownload:didReceiveData:)]) {
+                    [self.delegate audioDownload:self didReceiveData:[self.tmpData copy]];
+                }
+                
                 [self updateInfosWithStart:self.totalCount len:1];
                 [self downloadComplete];
                 [self.audioDataHandle closeFile];
                 self.audioDataHandle = nil;
                 [self.audioInfoHandle closeFile];
                 self.audioInfoHandle = nil;
+                self.tmpData = nil;
             } else if (self.startOffset == (self.totalCount * kFileInfoMapSacleValue) && bytesRead == self.mantissaSize) {
                 // 从尾数值开始下载的
                 [self.audioDataHandle seekToFileOffset:self.totalDownloadCount * kFileInfoMapSacleValue];
                 [self.audioDataHandle writeData:self.tmpData.copy];
-                self.tmpData = nil;
                 ss_extendedFileAttribute(self.savePath, kFileHaveDownloadedCountKey, @(self.totalDownloadCount * kFileInfoMapSacleValue + bytesRead).stringValue);
                 ss_extendedFileAttribute(self.savePath, kFileDownloadMantissaKey, @(YES).stringValue);
                 [self updateInfosWithStart:self.totalCount len:1];
+                if (self.delegate && [self.delegate respondsToSelector:@selector(audioDownload:didReceiveData:)]) {
+                    [self.delegate audioDownload:self didReceiveData:[self.tmpData copy]];
+                }
+                self.tmpData = nil;
             }
             [self updateDownloadSpeed];
         }
@@ -471,6 +485,7 @@ static void _CFReadStreamClientCallback(CFReadStreamRef stream, CFStreamEventTyp
 - (void)readResponseHeaders {
     
     if (_responseHeaders != nil) return;
+    
     CFHTTPMessageRef message = (CFHTTPMessageRef)CFReadStreamCopyProperty(_readStreamRef, kCFStreamPropertyHTTPResponseHeader);
     if (message == NULL) return;
     
@@ -493,9 +508,14 @@ static void _CFReadStreamClientCallback(CFReadStreamRef stream, CFStreamEventTyp
         ss_extendedFileAttribute(self.savePath, kFileResponseContentLengthKey, ContentLength);
         [self.audioDataHandle truncateFileAtOffset:_responseContentLength];
         [self.audioInfoHandle truncateFileAtOffset:(_responseContentLength / kFileInfoMapSacleValue) + 1];
+        if (self.delegate && [self.delegate respondsToSelector:@selector(audioDownload:didFetchFileSize:)]) {
+            [self.delegate audioDownload:self didFetchFileSize:_responseContentLength];
+        }
     }
     CFRelease(message);
-    
+    if (self.delegate && [self.delegate respondsToSelector:@selector(audioDownload:didFetchResponseHeaders:)]) {
+        [self.delegate audioDownload:self didFetchResponseHeaders:_responseHeaders];
+    }
 }
 
 - (void)eventEndEncountered {
@@ -524,9 +544,16 @@ static void _CFReadStreamClientCallback(CFReadStreamRef stream, CFStreamEventTyp
     }
     
     NSLog(@"downloadProgress: %@", @(_downloadProgress).stringValue);
+    if (self.delegate && [self.delegate respondsToSelector:@selector(audioDownload:didUpdateProgress::)]) {
+        [self.delegate audioDownload:self didUpdateProgress:_downloadProgress];
+    }
 }
 - (void)downloadComplete {
     _downloadProgress = 1.0;
+    _completeDownload = YES;
+    if (self.delegate && [self.delegate respondsToSelector:@selector(audioDownloadDidCompleted:)]) {
+        [self.delegate audioDownloadDidCompleted:self];
+    }
 }
 static NSByteCountFormatter *formatter = nil;
 - (void)updateDownloadSpeed {
@@ -538,6 +565,9 @@ static NSByteCountFormatter *formatter = nil;
     formatter.allowedUnits = NSByteCountFormatterUseKB;
     NSLog(@"downloadSpeed: %@", @(_downloadSpeed).stringValue);
     NSLog(@"formatter downloadSpeed: %@", [formatter stringFromByteCount:_downloadSpeed]);
+    if (self.delegate && [self.delegate respondsToSelector:@selector(audioDownload:didUpdateDownloadSpeed:)]) {
+        [self.delegate audioDownload:self didUpdateDownloadSpeed:_downloadSpeed];
+    }
 }
 
 - (void)_closeResponseStream

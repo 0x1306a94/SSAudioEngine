@@ -81,14 +81,12 @@
 		3C4D4F6C1F710A710089B540 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C4D4F6A1F710A710089B540 /* AudioToolbox.framework */; };
 		3C4D4F6D1F710A710089B540 /* VideoToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C4D4F6B1F710A710089B540 /* VideoToolbox.framework */; };
 		3C4D50561F7110B70089B540 /* t1.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 3C4D50521F7110B70089B540 /* t1.mp3 */; };
-		3C4D50571F7110B70089B540 /* t6.aac in Resources */ = {isa = PBXBuildFile; fileRef = 3C4D50531F7110B70089B540 /* t6.aac */; };
 		3C4D50581F7110B70089B540 /* 有一种爱叫做放手.flac in Resources */ = {isa = PBXBuildFile; fileRef = 3C4D50541F7110B70089B540 /* 有一种爱叫做放手.flac */; };
 		3C4D50591F7110B70089B540 /* 林俊杰-可惜没如果.wav in Resources */ = {isa = PBXBuildFile; fileRef = 3C4D50551F7110B70089B540 /* 林俊杰-可惜没如果.wav */; };
 		3C4D505E1F7111C80089B540 /* MusicModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C4D505D1F7111C80089B540 /* MusicModel.m */; };
 		3C4D505F1F7111FE0089B540 /* SSAudioEngineiOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C4D4DE21F7108B30089B540 /* SSAudioEngineiOS.framework */; };
 		3C4D50601F7111FE0089B540 /* SSAudioEngineiOS.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 3C4D4DE21F7108B30089B540 /* SSAudioEngineiOS.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		3C4D50651F7114F90089B540 /* 爱笑的眼睛.ape in Resources */ = {isa = PBXBuildFile; fileRef = 3C4D50641F7114F90089B540 /* 爱笑的眼睛.ape */; };
-		3C4D50681F7125CB0089B540 /* 期待爱(feat.金莎).ape in Resources */ = {isa = PBXBuildFile; fileRef = 3C4D50671F7125CB0089B540 /* 期待爱(feat.金莎).ape */; };
 		3C4D506C1F712C5D0089B540 /* SSAudioSession.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C4D506A1F712C5D0089B540 /* SSAudioSession.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3C4D506E1F712C5D0089B540 /* SSAudioSession.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C4D506B1F712C5D0089B540 /* SSAudioSession.m */; };
 		3C4D50731F712CA00089B540 /* SSMacAudioSession.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C4D50701F712CA00089B540 /* SSMacAudioSession.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -103,10 +101,8 @@
 		3C4D50BC1F7137020089B540 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3C4D50BA1F7137020089B540 /* Main.storyboard */; };
 		3C4D50C11F71370F0089B540 /* SSAudioEngineOSX.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C4D4E071F7108F00089B540 /* SSAudioEngineOSX.framework */; };
 		3C4D50C21F71370F0089B540 /* SSAudioEngineOSX.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 3C4D4E071F7108F00089B540 /* SSAudioEngineOSX.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		3C4D50C61F7137940089B540 /* 期待爱(feat.金莎).ape in Resources */ = {isa = PBXBuildFile; fileRef = 3C4D50671F7125CB0089B540 /* 期待爱(feat.金莎).ape */; };
 		3C4D50C71F7137940089B540 /* 爱笑的眼睛.ape in Resources */ = {isa = PBXBuildFile; fileRef = 3C4D50641F7114F90089B540 /* 爱笑的眼睛.ape */; };
 		3C4D50C81F7137940089B540 /* t1.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 3C4D50521F7110B70089B540 /* t1.mp3 */; };
-		3C4D50C91F7137940089B540 /* t6.aac in Resources */ = {isa = PBXBuildFile; fileRef = 3C4D50531F7110B70089B540 /* t6.aac */; };
 		3C4D50CA1F7137940089B540 /* 有一种爱叫做放手.flac in Resources */ = {isa = PBXBuildFile; fileRef = 3C4D50541F7110B70089B540 /* 有一种爱叫做放手.flac */; };
 		3C4D50CB1F7137940089B540 /* 林俊杰-可惜没如果.wav in Resources */ = {isa = PBXBuildFile; fileRef = 3C4D50551F7110B70089B540 /* 林俊杰-可惜没如果.wav */; };
 		3C4D50CC1F7137C80089B540 /* MusicModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C4D505D1F7111C80089B540 /* MusicModel.m */; };
@@ -339,6 +335,16 @@
 		3C4D58C31F7158670089B540 /* libavutil.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C4D58BC1F7158670089B540 /* libavutil.a */; };
 		3C4D58C41F7158670089B540 /* libswresample.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C4D58BD1F7158670089B540 /* libswresample.a */; };
 		3C4D58C51F7158670089B540 /* libswscale.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C4D58BE1F7158670089B540 /* libswscale.a */; };
+		3C4D58E51F72061D0089B540 /* 爱笑的眼睛.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 3C4D58E11F72061D0089B540 /* 爱笑的眼睛.m4a */; };
+		3C4D58E61F72061D0089B540 /* 爱笑的眼睛.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 3C4D58E11F72061D0089B540 /* 爱笑的眼睛.m4a */; };
+		3C4D58E71F72061D0089B540 /* 爱笑的眼睛.ogg in Resources */ = {isa = PBXBuildFile; fileRef = 3C4D58E21F72061D0089B540 /* 爱笑的眼睛.ogg */; };
+		3C4D58E81F72061D0089B540 /* 爱笑的眼睛.ogg in Resources */ = {isa = PBXBuildFile; fileRef = 3C4D58E21F72061D0089B540 /* 爱笑的眼睛.ogg */; };
+		3CA651CF1F72763000EF71DB /* t6.aac in Resources */ = {isa = PBXBuildFile; fileRef = 3CA651CE1F72760000EF71DB /* t6.aac */; };
+		3CA651D01F72763100EF71DB /* t6.aac in Resources */ = {isa = PBXBuildFile; fileRef = 3CA651CE1F72760000EF71DB /* t6.aac */; };
+		3CA651D51F728D9300EF71DB /* 林俊杰-爱不会绝迹.aac in Resources */ = {isa = PBXBuildFile; fileRef = 3CA651D41F728D7A00EF71DB /* 林俊杰-爱不会绝迹.aac */; };
+		3CA651D61F728D9400EF71DB /* 林俊杰-爱不会绝迹.aac in Resources */ = {isa = PBXBuildFile; fileRef = 3CA651D41F728D7A00EF71DB /* 林俊杰-爱不会绝迹.aac */; };
+		3CA651D81F72930E00EF71DB /* 爱笑的眼睛.ape in Resources */ = {isa = PBXBuildFile; fileRef = 3CA651D71F72930B00EF71DB /* 爱笑的眼睛.ape */; };
+		3CA651D91F72930E00EF71DB /* 爱笑的眼睛.ape in Resources */ = {isa = PBXBuildFile; fileRef = 3CA651D71F72930B00EF71DB /* 爱笑的眼睛.ape */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -442,13 +448,11 @@
 		3C4D4F6A1F710A710089B540 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk/System/Library/Frameworks/AudioToolbox.framework; sourceTree = DEVELOPER_DIR; };
 		3C4D4F6B1F710A710089B540 /* VideoToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = VideoToolbox.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.12.sdk/System/Library/Frameworks/VideoToolbox.framework; sourceTree = DEVELOPER_DIR; };
 		3C4D50521F7110B70089B540 /* t1.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = t1.mp3; sourceTree = "<group>"; };
-		3C4D50531F7110B70089B540 /* t6.aac */ = {isa = PBXFileReference; lastKnownFileType = file; path = t6.aac; sourceTree = "<group>"; };
 		3C4D50541F7110B70089B540 /* 有一种爱叫做放手.flac */ = {isa = PBXFileReference; lastKnownFileType = file; path = "有一种爱叫做放手.flac"; sourceTree = "<group>"; };
 		3C4D50551F7110B70089B540 /* 林俊杰-可惜没如果.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = "林俊杰-可惜没如果.wav"; sourceTree = "<group>"; };
 		3C4D505C1F7111C80089B540 /* MusicModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MusicModel.h; sourceTree = "<group>"; };
 		3C4D505D1F7111C80089B540 /* MusicModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MusicModel.m; sourceTree = "<group>"; };
 		3C4D50641F7114F90089B540 /* 爱笑的眼睛.ape */ = {isa = PBXFileReference; lastKnownFileType = file; path = "爱笑的眼睛.ape"; sourceTree = "<group>"; };
-		3C4D50671F7125CB0089B540 /* 期待爱(feat.金莎).ape */ = {isa = PBXFileReference; lastKnownFileType = file; path = "期待爱(feat.金莎).ape"; sourceTree = "<group>"; };
 		3C4D506A1F712C5D0089B540 /* SSAudioSession.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSAudioSession.h; sourceTree = "<group>"; };
 		3C4D506B1F712C5D0089B540 /* SSAudioSession.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSAudioSession.m; sourceTree = "<group>"; };
 		3C4D50701F712CA00089B540 /* SSMacAudioSession.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSMacAudioSession.h; sourceTree = "<group>"; };
@@ -695,6 +699,11 @@
 		3C4D58BC1F7158670089B540 /* libavutil.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libavutil.a; sourceTree = "<group>"; };
 		3C4D58BD1F7158670089B540 /* libswresample.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libswresample.a; sourceTree = "<group>"; };
 		3C4D58BE1F7158670089B540 /* libswscale.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libswscale.a; sourceTree = "<group>"; };
+		3C4D58E11F72061D0089B540 /* 爱笑的眼睛.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = "爱笑的眼睛.m4a"; sourceTree = "<group>"; };
+		3C4D58E21F72061D0089B540 /* 爱笑的眼睛.ogg */ = {isa = PBXFileReference; lastKnownFileType = file; path = "爱笑的眼睛.ogg"; sourceTree = "<group>"; };
+		3CA651CE1F72760000EF71DB /* t6.aac */ = {isa = PBXFileReference; lastKnownFileType = file; path = t6.aac; sourceTree = "<group>"; };
+		3CA651D41F728D7A00EF71DB /* 林俊杰-爱不会绝迹.aac */ = {isa = PBXFileReference; lastKnownFileType = file; path = "林俊杰-爱不会绝迹.aac"; sourceTree = "<group>"; };
+		3CA651D71F72930B00EF71DB /* 爱笑的眼睛.ape */ = {isa = PBXFileReference; lastKnownFileType = file; name = "爱笑的眼睛.ape"; path = "../../Documents/无损音频/爱笑的眼睛.ape"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -956,10 +965,13 @@
 		3C4D50511F7110B70089B540 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				3C4D50671F7125CB0089B540 /* 期待爱(feat.金莎).ape */,
+				3CA651D41F728D7A00EF71DB /* 林俊杰-爱不会绝迹.aac */,
+				3CA651CE1F72760000EF71DB /* t6.aac */,
+				3CA651D71F72930B00EF71DB /* 爱笑的眼睛.ape */,
+				3C4D58E11F72061D0089B540 /* 爱笑的眼睛.m4a */,
+				3C4D58E21F72061D0089B540 /* 爱笑的眼睛.ogg */,
 				3C4D50641F7114F90089B540 /* 爱笑的眼睛.ape */,
 				3C4D50521F7110B70089B540 /* t1.mp3 */,
-				3C4D50531F7110B70089B540 /* t6.aac */,
 				3C4D50541F7110B70089B540 /* 有一种爱叫做放手.flac */,
 				3C4D50551F7110B70089B540 /* 林俊杰-可惜没如果.wav */,
 			);
@@ -1798,12 +1810,15 @@
 				3C4D50581F7110B70089B540 /* 有一种爱叫做放手.flac in Resources */,
 				3C4D50591F7110B70089B540 /* 林俊杰-可惜没如果.wav in Resources */,
 				3C4D50651F7114F90089B540 /* 爱笑的眼睛.ape in Resources */,
-				3C4D50681F7125CB0089B540 /* 期待爱(feat.金莎).ape in Resources */,
-				3C4D50571F7110B70089B540 /* t6.aac in Resources */,
 				3C4D4DD61F71087D0089B540 /* LaunchScreen.storyboard in Resources */,
+				3CA651CF1F72763000EF71DB /* t6.aac in Resources */,
+				3C4D58E51F72061D0089B540 /* 爱笑的眼睛.m4a in Resources */,
+				3CA651D81F72930E00EF71DB /* 爱笑的眼睛.ape in Resources */,
 				3C4D50561F7110B70089B540 /* t1.mp3 in Resources */,
+				3C4D58E71F72061D0089B540 /* 爱笑的眼睛.ogg in Resources */,
 				3C4D4DD31F71087D0089B540 /* Assets.xcassets in Resources */,
 				3C4D4DD11F71087D0089B540 /* Main.storyboard in Resources */,
+				3CA651D51F728D9300EF71DB /* 林俊杰-爱不会绝迹.aac in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1827,10 +1842,13 @@
 			files = (
 				3C4D50C81F7137940089B540 /* t1.mp3 in Resources */,
 				3C4D50CA1F7137940089B540 /* 有一种爱叫做放手.flac in Resources */,
-				3C4D50C61F7137940089B540 /* 期待爱(feat.金莎).ape in Resources */,
+				3CA651D61F728D9400EF71DB /* 林俊杰-爱不会绝迹.aac in Resources */,
 				3C4D50CB1F7137940089B540 /* 林俊杰-可惜没如果.wav in Resources */,
 				3C4D50B91F7137020089B540 /* Assets.xcassets in Resources */,
-				3C4D50C91F7137940089B540 /* t6.aac in Resources */,
+				3CA651D01F72763100EF71DB /* t6.aac in Resources */,
+				3C4D58E61F72061D0089B540 /* 爱笑的眼睛.m4a in Resources */,
+				3C4D58E81F72061D0089B540 /* 爱笑的眼睛.ogg in Resources */,
+				3CA651D91F72930E00EF71DB /* 爱笑的眼睛.ape in Resources */,
 				3C4D50C71F7137940089B540 /* 爱笑的眼睛.ape in Resources */,
 				3C4D50BC1F7137020089B540 /* Main.storyboard in Resources */,
 			);

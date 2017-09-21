@@ -13,12 +13,13 @@
 #import "SSAudioEngineRenderer.h"
 #import "SSAudioDecoder.h"
 #import "SSAudioLocalDataProvider.h"
+#import "SSAudioRemoteDataProvider.h"
 #import "SSAudioEngineCommon.h"
 #import "SSAudioFFmpegDecoder.h"
 #import "SSAudioDecoderPool.h"
 #import "SSAudioFrame.h"
 
-@interface SSAudioStreamer ()<SSAudioEngineRendererDelegate,SSAudioDataProviderDelegate,SSAudioDecoderPoolDelegate,SSAudioDecoderDelegate>
+@interface SSAudioStreamer ()<SSAudioEngineRendererDelegate,SSAudioDecoderPoolDelegate,SSAudioDecoderDelegate,SSAudioDataProviderDelegate>
 @property (nonatomic, strong) SSAudioEngineRenderer *renderer;
 @property (nonatomic, strong) id<SSAudioFile> audioFile;
 @property (nonatomic, strong) id<SSAudioDecoder> decode;
@@ -41,26 +42,36 @@
 
 - (void)prepare {
     
-//    self.provider = [SSAudioLocalDataProvider dataProviderWithAudioFile:self.audioFile];
-//    self.provider.delegaete = self;
-
-    
     self.decoderPool = [[SSAudioDecoderPool alloc] init];
     self.decoderPool.delegaet = self;
     self.decoderPool.minBufferSize = ffmpeg_decode_pool_min_buffer_size;
     self.decoderPool.maxBufferSize = ffmpeg_decode_pool_max_buffer_size;
     
-//    [self.provider startReade];
+//    self.provider = [SSAudioRemoteDataProvider dataProviderWithAudioFile:self.audioFile];
+    self.provider = [SSAudioLocalDataProvider dataProviderWithAudioFile:self.audioFile];
+    self.provider.delegate = self;
+    
+    
+    self.decode = [[SSAudioFFmpegDecoder alloc] initWithDataProvider:self.provider];
+    self.decode.delegate = self;
+    self.hasBeginDecode = NO;
     
     self.renderer = [[SSAudioEngineRenderer alloc] init];
     self.renderer.delegate = self;
     
-    self.decode = [[SSAudioFFmpegDecoder alloc] init];
-    self.decode.delegate = self;
-    self.hasBeginDecode = YES;
-    [self.decode startDecode];
-}
+    [self.provider prepare];
 
+}
+#pragma mark - SSAudioDataProviderDelegate
+- (void)audioDataProviderDidPrepare:(id<SSAudioDataProvider>)audioDataProvider {
+    @synchronized(self) {
+        if (self.hasBeginDecode) {
+            return;
+        }
+        self.hasBeginDecode = YES;
+        [self.decode startDecode];
+    }
+}
 #pragma mark - SSAudioDecoderPoolDelegate
 /**第一次有足够的解码缓存可以开始启动播放队列了*/
 - (void)hasEnoughBufferToPlay {
@@ -69,7 +80,6 @@
             return;
         }
         [self.renderer start];
-//        self.queueR = [[SSAudioQueueRenderer alloc] initWithAudioDecodPool:self.decoderPool];
         self.hasPlay = YES;
     }
 }
@@ -109,7 +119,10 @@
     }
 }
 #pragma mark - SSAudioEngineRendererDelegate
-- (void)audioEngineRendererNeedFrameData:(SSAudioEngineRenderer *)renderer outputData:(float *)outputData numberOfFrames:(UInt32)numberOfFrames numberOfChannels:(UInt32)numberOfChannels {
+- (void)audioEngineRendererNeedFrameData:(SSAudioEngineRenderer *)renderer
+                              outputData:(float *)outputData
+                          numberOfFrames:(UInt32)numberOfFrames
+                        numberOfChannels:(UInt32)numberOfChannels {
     @autoreleasepool {
     
         while (numberOfFrames > 0) {

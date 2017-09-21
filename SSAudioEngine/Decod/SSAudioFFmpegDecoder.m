@@ -21,27 +21,18 @@
  t = (f * 8) / b
  
  */
-ssfile_size_t offset = 0 ;
-ssfile_size_t file_size = 0 ;
-
 static int ffmpeg_read_buffer(void *opaque, uint8_t *buf, int buf_size){
 
-    if(offset >= file_size)
-        return -1 ;
     SSAudioFFmpegDecoder *this = (__bridge SSAudioFFmpegDecoder *)opaque ;
-    [this.handle seekToFileOffset:offset] ;
-    NSData *data = [this.handle readDataOfLength:buf_size + offset > file_size ? (file_size - offset) : buf_size] ;
+    if(this.dataProvider.loc >= this.dataProvider.fileSize)
+        return -1 ;
+    
+    NSData *data = nil;
+    [this.dataProvider readDataWithLength:buf_size bytes:&data];
     [data getBytes:buf range:NSMakeRange(0, data.length)] ;
-    offset += data.length ;
-    NSLog(@"ffmpeg_read_buffer 需要读取: %d 本次读取: %ld 总共读取:%llu 文件大小: %llu",buf_size, data.length, offset, file_size) ;
+    NSLog(@"ffmpeg_read_buffer 需要读取: %d 本次读取: %ld 总共读取:%llu 文件大小: %llu",buf_size, data.length, this.dataProvider.loc, this.dataProvider.fileSize) ;
     return (int)data.length ;
 }
-
-static int64_t ffmpeg_seek_buffer(void *opaque, int64_t offset, int whence) {
-    
-    return whence;
-}
-
 @interface SSAudioFFmpegDecoder ()
 @property (nonatomic, assign) BOOL hasHeaderComplete;
 @property (nonatomic, assign) BOOL hasStartDecode;
@@ -75,19 +66,15 @@ static int64_t ffmpeg_seek_buffer(void *opaque, int64_t offset, int whence) {
         avformat_network_init();
     });
 }
-- (instancetype)init {
+- (instancetype)initWithDataProvider:(id<SSAudioDataProvider>)dataProvider {
+    if (!dataProvider) {
+        return nil;
+    }
     if (self == [super init]) {
         self.hasHeaderComplete = NO;
         self.hasStopDecode = NO;
         self.hasStartDecode = NO;
-        
-        NSString *filePath = [[NSBundle mainBundle] pathForResource:@"林俊杰-可惜没如果.wav" ofType:nil];
-        filePath = [[NSBundle mainBundle] pathForResource:@"t6.aac" ofType:nil];
-//        filePath = [[NSBundle mainBundle] pathForResource:@"有一种爱叫做放手.flac" ofType:nil];
-//        filePath = [[NSBundle mainBundle] pathForResource:@"t1.mp3" ofType:nil];
-//        filePath = [[NSBundle mainBundle] pathForResource:@"期待爱(feat.金莎).ape" ofType:nil];
-        _handle = [NSFileHandle fileHandleForReadingAtPath:filePath];
-        file_size = [[[NSFileManager defaultManager] attributesOfItemAtPath:filePath error:nil][NSFileSize] unsignedLongLongValue] ;
+        _dataProvider = dataProvider;
     }
     return self;
 }
@@ -148,10 +135,19 @@ static int64_t ffmpeg_seek_buffer(void *opaque, int64_t offset, int whence) {
     _formatCtx->pb = _ioContext;
     AVInputFormat *iformat = NULL;
     int ret = av_probe_input_buffer2(_ioContext, &iformat, NULL, NULL, 0, 0);
+    if (iformat != NULL) {
+        NSLog(@"AVInputFormat: %s", iformat->name);
+    }
     if (avformat_open_input(&_formatCtx, NULL, NULL, NULL)) {
         NSLog(@"无法打开源....");
         return;
     }
+//    NSString *path = [[NSBundle mainBundle] pathForResource:@"林俊杰-爱不会绝迹.aac" ofType:nil];
+//    if (avformat_open_input(&_formatCtx, [path UTF8String], NULL, NULL)) {
+//        NSLog(@"无法打开源....");
+//        return;
+//    }
+    
     if (avformat_find_stream_info(_formatCtx, NULL) < 0) {
         NSLog(@"查找流失败...");
         return;
@@ -199,13 +195,13 @@ static int64_t ffmpeg_seek_buffer(void *opaque, int64_t offset, int whence) {
         if (_formatCtx->duration <= 0) {
             _bit_rate = 900000;
         } else {
-            _bit_rate = (file_size * 8) / (_formatCtx->duration / AV_TIME_BASE);
+            _bit_rate = (self.dataProvider.fileSize * 8) / (_formatCtx->duration / AV_TIME_BASE);
         }
     } else {
         _bit_rate = _codec_context->bit_rate;
     }
     if (_formatCtx->duration <= 0) {
-        _duration = (file_size * 8) / _bit_rate;
+        _duration = (self.dataProvider.fileSize * 8) / _bit_rate;
     } else {
         _duration = _formatCtx->duration / AV_TIME_BASE;
     }
@@ -221,6 +217,7 @@ static int64_t ffmpeg_seek_buffer(void *opaque, int64_t offset, int whence) {
 
 - (void)decode {
     
+    [NSThread currentThread].name = @"com.king129.SSAudioEngine.decode.thread";
     av_packet_unref(&_packet);
     av_frame_unref(_temp_frame);
     
@@ -231,7 +228,7 @@ static int64_t ffmpeg_seek_buffer(void *opaque, int64_t offset, int whence) {
         
         int ret = av_read_frame(_formatCtx, &_packet);
         if (ret != 0) {
-            NSLog(@"av_read_frame error: %d", ret);
+            NSLog(@"%@", SSFFCheckError(ret));
             break;
         }
         if (_packet.stream_index == _audio_stream_id) {
@@ -278,60 +275,67 @@ static int64_t ffmpeg_seek_buffer(void *opaque, int64_t offset, int whence) {
     if (!_temp_frame->data[0]) {
         return nil;
     }
-    int numberOfFrames;
-    void * audioDataBuffer;
-    
-    if (_audio_swr_context) {
-        // 重采样
-        const int ratio = MAX(1, _samplingRate / _codec_context->sample_rate) * MAX(1, _channelCount / _codec_context->channels) * 2;
-        const int buffer_size = av_samples_get_buffer_size(NULL, _channelCount, _temp_frame->nb_samples * ratio, AV_SAMPLE_FMT_S16, 1);
+    @autoreleasepool {
+        int numberOfFrames;
+        void *audioDataBuffer;
         
-        if (!_audio_swr_buffer || _audio_swr_buffer_size < buffer_size) {
-            _audio_swr_buffer_size = buffer_size;
-            _audio_swr_buffer = realloc(_audio_swr_buffer, _audio_swr_buffer_size);
+        if (_audio_swr_context) {
+            // 重采样
+            const int ratio = MAX(1, _samplingRate / _codec_context->sample_rate) * MAX(1, _channelCount / _codec_context->channels) * 2;
+            const int buffer_size = av_samples_get_buffer_size(NULL, _channelCount, _temp_frame->nb_samples * ratio, AV_SAMPLE_FMT_S16, 1);
+            
+            if (!_audio_swr_buffer || _audio_swr_buffer_size < buffer_size) {
+                _audio_swr_buffer_size = buffer_size;
+                _audio_swr_buffer = realloc(_audio_swr_buffer, _audio_swr_buffer_size);
+            }
+            
+            Byte * outyput_buffer[2] = {_audio_swr_buffer, 0};
+            numberOfFrames = swr_convert(_audio_swr_context, outyput_buffer, _temp_frame->nb_samples * ratio, (const uint8_t **)_temp_frame->data, _temp_frame->nb_samples);
+            NSError * error = SSFFCheckError(numberOfFrames);
+            if (error) {
+                NSLog(@"audio codec error : %@", error);
+                return nil;
+            }
+            audioDataBuffer = (void *)malloc(_audio_swr_buffer_size);
+            memcpy(audioDataBuffer, _audio_swr_buffer, _audio_swr_buffer_size);
+            
+        } else {
+            if (_codec_context->sample_fmt != AV_SAMPLE_FMT_S16) {
+                NSLog(@"audio format error");
+                return nil;
+            }
+            audioDataBuffer = _temp_frame->data[0];
+            numberOfFrames = _temp_frame->nb_samples;
         }
         
-        Byte * outyput_buffer[2] = {_audio_swr_buffer, 0};
-        numberOfFrames = swr_convert(_audio_swr_context, outyput_buffer, _temp_frame->nb_samples * ratio, (const uint8_t **)_temp_frame->data, _temp_frame->nb_samples);
-        NSError * error = SSFFCheckError(numberOfFrames);
-        if (error) {
-            NSLog(@"audio codec error : %@", error);
-            return nil;
+        
+        const NSUInteger numElements = numberOfFrames * _codec_context->channels;
+        NSMutableData *data = [NSMutableData dataWithLength:numElements * sizeof(float)];
+        vDSP_vflt16(audioDataBuffer, 1, data.mutableBytes, 1, numElements);
+        float scale = 1.0 / (float) INT16_MAX;
+        vDSP_vsmul(data.mutableBytes, 1, &scale, data.mutableBytes, 1, numElements);
+        SSAudioFrame *audioFrame = [[SSAudioFrame alloc] init];
+        audioFrame->data = malloc([data length]);
+        memcpy(audioFrame->data, [data bytes], [data length]);
+        
+        audioFrame->length = (int)[data length];
+        audioFrame->output_offset = 0;
+        AudioStreamPacketDescription packetDescription  ;
+        packetDescription.mStartOffset = 0 ;
+        packetDescription.mDataByteSize = (UInt32)[data length];
+        packetDescription.mVariableFramesInPacket = 0 ;
+        audioFrame->asbd = packetDescription;
+        audioFrame.position = av_frame_get_best_effort_timestamp(_temp_frame) * _timebase;
+        audioFrame.duration = av_frame_get_pkt_duration(_temp_frame) * _timebase;
+        
+        if (audioFrame.duration == 0) {
+            audioFrame.duration = audioFrame->length / (sizeof(float) * _channelCount * _samplingRate);
         }
-        audioDataBuffer = _audio_swr_buffer;
-    } else {
-        if (_codec_context->sample_fmt != AV_SAMPLE_FMT_S16) {
-            NSLog(@"audio format error");
-            return nil;
+        if (audioDataBuffer != NULL) {
+            free(audioDataBuffer);
+            audioDataBuffer = NULL;
         }
-        audioDataBuffer = _temp_frame->data[0];
-        numberOfFrames = _temp_frame->nb_samples;
+        return audioFrame;
     }
-    
-    
-    const NSUInteger numElements = numberOfFrames * _codec_context->channels;
-    NSMutableData *data = [NSMutableData dataWithLength:numElements * sizeof(float)];
-    vDSP_vflt16(audioDataBuffer, 1, data.mutableBytes, 1, numElements);
-    float scale = 1.0 / (float) INT16_MAX;
-    vDSP_vsmul(data.mutableBytes, 1, &scale, data.mutableBytes, 1, numElements);
-    
-    SSAudioFrame *audioFrame = [[SSAudioFrame alloc] init];
-    audioFrame->data = malloc([data length]);
-    memcpy(audioFrame->data, [data bytes], [data length]);
-    
-    audioFrame->length = (int)[data length];
-    audioFrame->output_offset = 0;
-    AudioStreamPacketDescription packetDescription  ;
-    packetDescription.mStartOffset = 0 ;
-    packetDescription.mDataByteSize = (UInt32)[data length];
-    packetDescription.mVariableFramesInPacket = 0 ;
-    audioFrame->asbd = packetDescription;
-    audioFrame.position = av_frame_get_best_effort_timestamp(_temp_frame) * _timebase;
-    audioFrame.duration = av_frame_get_pkt_duration(_temp_frame) * _timebase;
-    
-    if (audioFrame.duration == 0) {
-        audioFrame.duration = audioFrame->length / (sizeof(float) * _channelCount * _samplingRate);
-    }
-    return audioFrame;
 }
 @end

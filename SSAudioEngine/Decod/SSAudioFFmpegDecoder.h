@@ -10,7 +10,7 @@
 #import <AudioToolbox/AudioToolbox.h>
 #import "SSAudioEngineCommon.h"
 #import "SSAudioDecoder.h"
-
+#import "SSAudioDataProvider.h"
 
 @interface SSAudioFFmpegDecoder : NSObject<SSAudioDecoder>
 
@@ -20,4 +20,8 @@
 @property (nonatomic, assign, readonly) NSTimeInterval duration;
 @property (nonatomic, assign) ssfile_size_t decodeOffset;
 @property (nonatomic, strong) id<SSAudioDecoderDelegate> delegate;
+@property (nonatomic, weak, readonly) id<SSAudioDataProvider> dataProvider;
+- (instancetype)initWithDataProvider:(id<SSAudioDataProvider>)dataProvider;
+- (void)startDecode;
+- (void)stopDecode;
 @end

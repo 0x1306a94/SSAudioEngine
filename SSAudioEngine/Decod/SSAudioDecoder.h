@@ -9,6 +9,7 @@
 #import <Foundation/Foundation.h>
 
 @protocol SSAudioDecoderDelegate;
+@protocol SSAudioDataProvider;
 
 @class SSAudioFrame;
 
@@ -18,7 +19,9 @@
 @property (nonatomic, assign, readonly) int64_t bit_rate;
 @property (nonatomic, assign, readonly) NSTimeInterval duration;
 @property (nonatomic, strong) id<SSAudioDecoderDelegate> delegate;
+@property (nonatomic, weak, readonly) id<SSAudioDataProvider> dataProvider;
 
+- (instancetype)initWithDataProvider:(id<SSAudioDataProvider>)dataProvider;
 - (void)startDecode;
 - (void)stopDecode;
 @end
