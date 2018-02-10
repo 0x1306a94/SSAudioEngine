@@ -11,15 +11,17 @@
 #import "SSAudioFile.h"
 #import "SSAudioDataProvider.h"
 #import "SSAudioEngineRenderer.h"
+#import "SSAudioQueueRenderer.h"
 #import "SSAudioDecoder.h"
 #import "SSAudioLocalDataProvider.h"
 #import "SSAudioRemoteDataProvider.h"
 #import "SSAudioEngineCommon.h"
 #import "SSAudioFFmpegDecoder.h"
+#import "SSAudioFileStreamDecoder.h"
 #import "SSAudioDecoderPool.h"
 #import "SSAudioFrame.h"
 
-@interface SSAudioStreamer ()<SSAudioEngineRendererDelegate,SSAudioDecoderPoolDelegate,SSAudioDecoderDelegate,SSAudioDataProviderDelegate>
+@interface SSAudioStreamer ()<SSAudioEngineRendererDelegate,SSAudioDecoderPoolDelegate,SSAudioDecoderDelegate,SSAudioDataProviderDelegate,SSAudioQueueRendererDatasource>
 @property (nonatomic, strong) SSAudioEngineRenderer *renderer;
 @property (nonatomic, strong) id<SSAudioFile> audioFile;
 @property (nonatomic, strong) id<SSAudioDecoder> decode;
@@ -44,8 +46,8 @@
     
     self.decoderPool = [[SSAudioDecoderPool alloc] init];
     self.decoderPool.delegaet = self;
-    self.decoderPool.minBufferSize = ffmpeg_decode_pool_min_buffer_size;
-    self.decoderPool.maxBufferSize = ffmpeg_decode_pool_max_buffer_size;
+    self.decoderPool.minBufferSize = decode_pool_min_buffer_size;
+    self.decoderPool.maxBufferSize = decode_pool_max_buffer_size;
     if ([[self.audioFile ss_audioURL] isFileURL]) {
         self.provider = [SSAudioLocalDataProvider dataProviderWithAudioFile:self.audioFile];
     } else {
@@ -54,13 +56,21 @@
     self.provider.delegate = self;
     
     
-    self.decode = [[SSAudioFFmpegDecoder alloc] initWithDataProvider:self.provider];
+//    self.decode = [[SSAudioFFmpegDecoder alloc] initWithDataProvider:self.provider];
+//    self.decode.delegate = self;
+//    self.hasBeginDecode = NO;
+    
+    BOOL b = NO;
+    if (b) {
+        self.decode = [[SSAudioFileStreamDecoder alloc] initWithDataProvider:self.provider];
+    } else {
+        self.decode = [[SSAudioFFmpegDecoder alloc] initWithDataProvider:self.provider];
+    }
     self.decode.delegate = self;
-    self.hasBeginDecode = NO;
+//    [self.decode startDecode];
     
-    self.renderer = [[SSAudioEngineRenderer alloc] init];
+    self.renderer = [[SSAudioEngineRenderer alloc] initWithUseAudioFileStream:b];
     self.renderer.delegate = self;
-    
     [self.provider prepare];
 
 }
@@ -114,6 +124,9 @@
 #pragma mark - SSAudioDecoderDelegate
 - (void)audioDecoderDidDecodeHeaderComplete:(id<SSAudioDecoder>)decoder {
     NSLog(@"头部解析完成");
+    
+//    AudioStreamBasicDescription asbd = decoder.streamBasicDescription;
+//    [self.renderer cretaeAudioConverterWithAudioStreamDescription:&asbd];
 }
 - (void)audioDecoder:(id<SSAudioDecoder>)decoder didDecodeFrame:(SSAudioFrame *)frame {
     @synchronized (self) {
@@ -155,6 +168,40 @@
             
         }
     
+    }
+}
+- (SSAudioFrame *)audioEngineRendererNeedFrameData:(SSAudioEngineRenderer *)renderer {
+    
+    return [self.decoderPool popDecodeData];
+}
+
+- (void)audioQueueRenderer:(SSAudioQueueRenderer *)renderer
+                    buffer:(void *)buffer
+                  needSize:(UInt32)needSize
+                  realSize:(UInt32 *)realSize {
+    
+    @autoreleasepool {
+        while (needSize > 0) {
+            if (!self.currentAudioFrame) {
+                self.currentAudioFrame = [self.decoderPool popDecodeData];
+            }
+            
+            if (!self.currentAudioFrame) {
+                return;
+            }
+            
+            const Byte * bytes = (Byte *)self.currentAudioFrame->data + self.currentAudioFrame->output_offset;
+            const NSUInteger bytesLeft = self.currentAudioFrame->length - self.currentAudioFrame->output_offset;
+            const NSUInteger bytesToCopy = MIN(needSize, bytesLeft);
+            memcpy(buffer, bytes, bytesToCopy);
+            needSize -= bytesToCopy;
+            *realSize += bytesToCopy;
+            if (bytesToCopy < bytesLeft) {
+                self.currentAudioFrame->output_offset += bytesToCopy;
+            } else {
+                self.currentAudioFrame = nil;
+            }
+        }
     }
 }
 @end

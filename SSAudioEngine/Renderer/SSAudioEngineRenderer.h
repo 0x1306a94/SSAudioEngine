@@ -23,11 +23,16 @@
                           numberOfFrames:(UInt32)numberOfFrames
                         numberOfChannels:(UInt32)numberOfChannels;
 
+- (SSAudioFrame *)audioEngineRendererNeedFrameData:(SSAudioEngineRenderer *)renderer;
+
 @end
 
 @interface SSAudioEngineRenderer : NSObject
 @property (nonatomic, weak) id<SSAudioEngineRendererDelegate> delegate;
 @property (nonatomic, assign, readonly) BOOL playing;
+@property (nonatomic, assign, readonly) BOOL useAudioFileStream;
+- (instancetype)initWithUseAudioFileStream:(BOOL)flag;
+- (BOOL)cretaeAudioConverterWithAudioStreamDescription:(AudioStreamBasicDescription *)audioStreamBasicDescription;
 - (void)start;
 - (void)pause;
 @end

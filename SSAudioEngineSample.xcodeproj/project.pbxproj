@@ -339,6 +339,14 @@
 		3C4D58E61F72061D0089B540 /* 爱笑的眼睛.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 3C4D58E11F72061D0089B540 /* 爱笑的眼睛.m4a */; };
 		3C4D58E71F72061D0089B540 /* 爱笑的眼睛.ogg in Resources */ = {isa = PBXBuildFile; fileRef = 3C4D58E21F72061D0089B540 /* 爱笑的眼睛.ogg */; };
 		3C4D58E81F72061D0089B540 /* 爱笑的眼睛.ogg in Resources */ = {isa = PBXBuildFile; fileRef = 3C4D58E21F72061D0089B540 /* 爱笑的眼睛.ogg */; };
+		3C5820AE1F761EBA00329785 /* SSAudioQueueRenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C5820AC1F761EBA00329785 /* SSAudioQueueRenderer.h */; };
+		3C5820AF1F761EBA00329785 /* SSAudioQueueRenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C5820AC1F761EBA00329785 /* SSAudioQueueRenderer.h */; };
+		3C5820B01F761EBA00329785 /* SSAudioQueueRenderer.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C5820AD1F761EBA00329785 /* SSAudioQueueRenderer.m */; };
+		3C5820B11F761EBA00329785 /* SSAudioQueueRenderer.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C5820AD1F761EBA00329785 /* SSAudioQueueRenderer.m */; };
+		3C5820B51F78AFE000329785 /* SSAudioFileStreamDecoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C5820B31F78AFE000329785 /* SSAudioFileStreamDecoder.h */; };
+		3C5820B61F78AFE000329785 /* SSAudioFileStreamDecoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C5820B31F78AFE000329785 /* SSAudioFileStreamDecoder.h */; };
+		3C5820B71F78AFE000329785 /* SSAudioFileStreamDecoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C5820B41F78AFE000329785 /* SSAudioFileStreamDecoder.m */; };
+		3C5820B81F78AFE000329785 /* SSAudioFileStreamDecoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C5820B41F78AFE000329785 /* SSAudioFileStreamDecoder.m */; };
 		3CA651CF1F72763000EF71DB /* t6.aac in Resources */ = {isa = PBXBuildFile; fileRef = 3CA651CE1F72760000EF71DB /* t6.aac */; };
 		3CA651D01F72763100EF71DB /* t6.aac in Resources */ = {isa = PBXBuildFile; fileRef = 3CA651CE1F72760000EF71DB /* t6.aac */; };
 		3CA651D51F728D9300EF71DB /* 林俊杰-爱不会绝迹.aac in Resources */ = {isa = PBXBuildFile; fileRef = 3CA651D41F728D7A00EF71DB /* 林俊杰-爱不会绝迹.aac */; };
@@ -701,6 +709,10 @@
 		3C4D58BE1F7158670089B540 /* libswscale.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libswscale.a; sourceTree = "<group>"; };
 		3C4D58E11F72061D0089B540 /* 爱笑的眼睛.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = "爱笑的眼睛.m4a"; sourceTree = "<group>"; };
 		3C4D58E21F72061D0089B540 /* 爱笑的眼睛.ogg */ = {isa = PBXFileReference; lastKnownFileType = file; path = "爱笑的眼睛.ogg"; sourceTree = "<group>"; };
+		3C5820AC1F761EBA00329785 /* SSAudioQueueRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSAudioQueueRenderer.h; sourceTree = "<group>"; };
+		3C5820AD1F761EBA00329785 /* SSAudioQueueRenderer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSAudioQueueRenderer.m; sourceTree = "<group>"; };
+		3C5820B31F78AFE000329785 /* SSAudioFileStreamDecoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSAudioFileStreamDecoder.h; sourceTree = "<group>"; };
+		3C5820B41F78AFE000329785 /* SSAudioFileStreamDecoder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSAudioFileStreamDecoder.m; sourceTree = "<group>"; };
 		3CA651CE1F72760000EF71DB /* t6.aac */ = {isa = PBXFileReference; lastKnownFileType = file; path = t6.aac; sourceTree = "<group>"; };
 		3CA651D41F728D7A00EF71DB /* 林俊杰-爱不会绝迹.aac */ = {isa = PBXFileReference; lastKnownFileType = file; path = "林俊杰-爱不会绝迹.aac"; sourceTree = "<group>"; };
 		3CA651D71F72930B00EF71DB /* 爱笑的眼睛.ape */ = {isa = PBXFileReference; lastKnownFileType = file; name = "爱笑的眼睛.ape"; path = "../../Documents/无损音频/爱笑的眼睛.ape"; sourceTree = "<group>"; };
@@ -894,6 +906,8 @@
 				3C4D4E1D1F7109170089B540 /* SSAudioDecoder.h */,
 				3C4D4E1E1F7109170089B540 /* SSAudioFFmpegDecoder.h */,
 				3C4D4E1F1F7109170089B540 /* SSAudioFFmpegDecoder.m */,
+				3C5820B31F78AFE000329785 /* SSAudioFileStreamDecoder.h */,
+				3C5820B41F78AFE000329785 /* SSAudioFileStreamDecoder.m */,
 			);
 			path = Decod;
 			sourceTree = "<group>";
@@ -930,6 +944,8 @@
 			children = (
 				3C4D4E2A1F7109170089B540 /* SSAudioEngineRenderer.h */,
 				3C4D4E2B1F7109170089B540 /* SSAudioEngineRenderer.m */,
+				3C5820AC1F761EBA00329785 /* SSAudioQueueRenderer.h */,
+				3C5820AD1F761EBA00329785 /* SSAudioQueueRenderer.m */,
 			);
 			path = Renderer;
 			sourceTree = "<group>";
@@ -1510,7 +1526,9 @@
 				3C4D58701F71585D0089B540 /* avstring.h in Headers */,
 				3C4D585C1F71585D0089B540 /* videotoolbox.h in Headers */,
 				3C4D58721F71585D0089B540 /* base64.h in Headers */,
+				3C5820AE1F761EBA00329785 /* SSAudioQueueRenderer.h in Headers */,
 				3C4D58581F71585D0089B540 /* vaapi.h in Headers */,
+				3C5820B51F78AFE000329785 /* SSAudioFileStreamDecoder.h in Headers */,
 				3C4D58591F71585D0089B540 /* vda.h in Headers */,
 				3C4D587B1F71585D0089B540 /* cpu.h in Headers */,
 				3C4D589C1F71585D0089B540 /* opt.h in Headers */,
@@ -1619,6 +1637,7 @@
 				3C4D57B01F7153970089B540 /* parseutils.h in Headers */,
 				3C4D57C81F7153970089B540 /* version.h in Headers */,
 				3C4D57BF1F7153970089B540 /* threadmessage.h in Headers */,
+				3C5820B61F78AFE000329785 /* SSAudioFileStreamDecoder.h in Headers */,
 				3C4D579D1F7153970089B540 /* hwcontext_cuda.h in Headers */,
 				3C4D576B1F7153970089B540 /* vaapi.h in Headers */,
 				3C4D57711F7153970089B540 /* xvmc.h in Headers */,
@@ -1632,6 +1651,7 @@
 				3C4D57B61F7153970089B540 /* rc4.h in Headers */,
 				3C4D57861F7153970089B540 /* blowfish.h in Headers */,
 				3C4D579C1F7153970089B540 /* hwcontext.h in Headers */,
+				3C5820AF1F761EBA00329785 /* SSAudioQueueRenderer.h in Headers */,
 				3C4D57BD1F7153970089B540 /* stereo3d.h in Headers */,
 				3C4D576D1F7153970089B540 /* vdpau.h in Headers */,
 				3C4D57C71F7153970089B540 /* postprocess.h in Headers */,
@@ -1873,10 +1893,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				3C4D4E311F7109170089B540 /* NSString+SSURL.m in Sources */,
+				3C5820B01F761EBA00329785 /* SSAudioQueueRenderer.m in Sources */,
 				3C4D506E1F712C5D0089B540 /* SSAudioSession.m in Sources */,
 				3C4D4E5D1F7109170089B540 /* SSAudioStreamer.m in Sources */,
 				3C4D4E471F7109170089B540 /* SSAudioFFmpegDecoder.m in Sources */,
 				3C4D4E4B1F7109170089B540 /* SSAudioDownload.m in Sources */,
+				3C5820B71F78AFE000329785 /* SSAudioFileStreamDecoder.m in Sources */,
 				3C4D4E3D1F7109170089B540 /* SSAudioLocalDataProvider.m in Sources */,
 				3C4D4E371F7109170089B540 /* SSAudioEngineUtility.m in Sources */,
 				3C4D4E411F7109170089B540 /* SSAudioRemoteDataProvider.m in Sources */,
@@ -1891,10 +1913,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				3C4D4E321F7109170089B540 /* NSString+SSURL.m in Sources */,
+				3C5820B11F761EBA00329785 /* SSAudioQueueRenderer.m in Sources */,
 				3C4D4E5E1F7109170089B540 /* SSAudioStreamer.m in Sources */,
 				3C4D50751F712CA00089B540 /* SSMacAudioSession.m in Sources */,
 				3C4D4E481F7109170089B540 /* SSAudioFFmpegDecoder.m in Sources */,
 				3C4D4E4C1F7109170089B540 /* SSAudioDownload.m in Sources */,
+				3C5820B81F78AFE000329785 /* SSAudioFileStreamDecoder.m in Sources */,
 				3C4D4E3E1F7109170089B540 /* SSAudioLocalDataProvider.m in Sources */,
 				3C4D4E381F7109170089B540 /* SSAudioEngineUtility.m in Sources */,
 				3C4D4E421F7109170089B540 /* SSAudioRemoteDataProvider.m in Sources */,

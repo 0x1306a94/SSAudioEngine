@@ -16,7 +16,7 @@
 #pragma clang diagnostic ignored"-Wdeprecated-declarations"
 
 
-ssfile_size_t const kFileInfoMapSacleValue              = 1024 * 10;
+ssfile_size_t const kFileInfoMapSacleValue              = 1024 * 5;
 // 文件总大小
 static NSString *const kFileResponseContentLengthKey    = @"kFileResponseContentLengthKey";
 // 文件真实下载大小

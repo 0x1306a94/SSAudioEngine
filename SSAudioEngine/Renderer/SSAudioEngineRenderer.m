@@ -62,9 +62,13 @@ static NSError * checkError(OSStatus result, NSString * domain)
 
 
 @implementation SSAudioEngineRenderer
-
-- (instancetype)init {
+{
+    AudioBufferList *renderBufferList;
+    AudioConverterRef converter;
+}
+- (instancetype)initWithUseAudioFileStream:(BOOL)flag {
     if (self == [super init]) {
+        _useAudioFileStream = flag;
         [self prepare];
     }
     return self;
@@ -76,6 +80,23 @@ static NSError * checkError(OSStatus result, NSString * domain)
     self.audioSession = [SSAudioSession sharedInstance];
 #endif
     self->_outData = (float *)calloc(max_frame_size * max_chan, sizeof(float));
+    
+    if (_useAudioFileStream) {
+        renderBufferList = (AudioBufferList *)calloc(1, sizeof(UInt32) + sizeof(AudioBuffer));
+        renderBufferList->mNumberBuffers = 1;
+        renderBufferList->mBuffers[0].mNumberChannels = 2;
+        renderBufferList->mBuffers[0].mDataByteSize = kRenderBufferSize;
+        renderBufferList->mBuffers[0].mData = calloc(1, kRenderBufferSize);
+    }
+}
+- (BOOL)cretaeAudioConverterWithAudioStreamDescription:(AudioStreamBasicDescription *)audioStreamBasicDescription {
+    if (audioStreamBasicDescription == NULL) {
+        return NO;
+    }
+    AudioStreamBasicDescription destFormat = SSSignedIntLinearPCMStreamDescription();
+    OSStatus status = AudioConverterNew(&(*audioStreamBasicDescription), &destFormat, &converter);
+    
+    return (status == noErr && converter != NULL);
 }
 - (BOOL)registerAudioSession
 {
@@ -454,7 +475,39 @@ static NSError * checkError(OSStatus result, NSString * domain)
     }
     return noErr;
 }
-
+- (OSStatus)renderFramesWithUseAudioFileStream:(UInt32)numberOfFrames ioData:(AudioBufferList *)ioData {
+    
+    if (!self.registered && converter != NULL) {
+        return noErr;
+    }
+    for (int iBuffer = 0; iBuffer < ioData->mNumberBuffers; iBuffer++) {
+        memset(ioData->mBuffers[iBuffer].mData, 0, ioData->mBuffers[iBuffer].mDataByteSize);
+    }
+    
+    @autoreleasepool {
+        UInt32 packetSize = numberOfFrames;
+        OSStatus status = AudioConverterFillComplexBuffer(converter,
+                                                          SSPlayerConverterFiller,
+                                                          (__bridge void *)(self),
+                                                          &packetSize,
+                                                          renderBufferList,
+                                                          NULL);
+        if (status != noErr && status != SSAudioConverterCallbackErr_NoData) {
+            [self pause];
+            return -1;
+        } else if (!packetSize) {
+            ioData->mNumberBuffers = 0;
+        } else {
+            ioData->mNumberBuffers = 1;
+            ioData->mBuffers[0].mNumberChannels = 2;
+            ioData->mBuffers[0].mDataByteSize = renderBufferList->mBuffers[0].mDataByteSize;
+            ioData->mBuffers[0].mData = renderBufferList->mBuffers[0].mData;
+            renderBufferList->mBuffers[0].mDataByteSize = kRenderBufferSize;
+        }
+    }
+    
+    return noErr;
+}
 static OSStatus renderCallback(void * inRefCon,
                                AudioUnitRenderActionFlags * ioActionFlags,
                                const AudioTimeStamp * inTimeStamp,
@@ -463,7 +516,41 @@ static OSStatus renderCallback(void * inRefCon,
                                AudioBufferList * ioData)
 {
     SSAudioEngineRenderer * manager = (__bridge SSAudioEngineRenderer *)inRefCon;
-    return [manager renderFrames:inNumberFrames ioData:ioData];
+    if (manager.useAudioFileStream) {
+        return [manager renderFramesWithUseAudioFileStream:inNumberFrames ioData:ioData];
+    } else {
+        return [manager renderFrames:inNumberFrames ioData:ioData];
+    }
+}
+
+static OSStatus SSPlayerConverterFiller(AudioConverterRef inAudioConverter,
+                                        UInt32* ioNumberDataPackets,
+                                        AudioBufferList* ioData,
+                                        AudioStreamPacketDescription** outDataPacketDescription,
+                                        void* inUserData) {
+    static AudioStreamPacketDescription aspdesc;
+    @autoreleasepool {
+        SSAudioEngineRenderer *self = (__bridge SSAudioEngineRenderer *)inUserData;
+        SSAudioFrame *frame = [self.delegate audioEngineRendererNeedFrameData:self];
+        if (!frame) {
+            return SSAudioConverterCallbackErr_NoData;
+        }
+        
+        ioData->mNumberBuffers = 1;
+        if (ioData->mBuffers[0].mData == NULL) {
+            ioData->mBuffers[0].mData = malloc(frame->length);
+        }
+        memcpy(ioData->mBuffers[0].mData, frame->data, frame->length);
+        ioData->mBuffers[0].mDataByteSize = frame->length;
+        *outDataPacketDescription = &aspdesc;
+        aspdesc.mDataByteSize = frame->length;
+        aspdesc.mStartOffset = 0;
+        aspdesc.mVariableFramesInPacket = 1;
+        frame = nil;
+    }
+    
+    
+    return noErr;
 }
 @end
 

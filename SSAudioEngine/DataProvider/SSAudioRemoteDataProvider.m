@@ -19,6 +19,7 @@
 @property (nonatomic, assign) BOOL stop;
 @property (nonatomic, assign) BOOL read;
 @property (nonatomic, assign) BOOL isPrepare;
+@property (nonatomic, assign) ssfile_size_t minSize;
 @end
 
 
@@ -35,6 +36,7 @@
         provider.stop = NO;
         provider.read = NO;
         provider.isPrepare = NO;
+        provider.minSize = decode_pool_min_buffer_size;
     }
     return provider;
 }
@@ -95,6 +97,7 @@
     }
     *dataBuffer = data;
     self.loc += realLen;
+    self.minSize -= realLen;
     return realLen;
 }
 #pragma mark - SSAudioDownloadDelegate
@@ -107,7 +110,7 @@
 - (void)audioDownload:(SSAudioDownload *)audioDownload didReceiveData:(NSData *)data {
     
     @synchronized(self) {
-        if (audioDownload.totalDownloadCount * 1024 >= ffmpeg_decode_pool_min_buffer_size) {
+        if (audioDownload.totalDownloadCount * 1024 >= decode_pool_min_buffer_size) {
             if (self.delegate && [self.delegate respondsToSelector:@selector(audioDataProviderDidPrepare:)] && !self.isPrepare) {
                 [self.delegate audioDataProviderDidPrepare:self];
                 self.isPrepare = YES;

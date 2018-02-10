@@ -16,6 +16,7 @@
 #import "libswresample/swresample.h"
 #import "libswscale/swscale.h"
 #import "SSAudioFrame.h"
+#import "SSAudioFile.h"
 /**
  // 播放时长计算公式
  t = (f * 8) / b
@@ -124,9 +125,9 @@ static int ffmpeg_read_buffer(void *opaque, uint8_t *buf, int buf_size){
     
     _formatCtx = avformat_alloc_context();
     
-    unsigned char *audioBuffer = (unsigned char *)av_malloc(ffmpeg_audio_buffer_size);
+    unsigned char *audioBuffer = (unsigned char *)av_malloc(reade_audio_buffer_size);
     _ioContext = avio_alloc_context(audioBuffer,
-                                    ffmpeg_audio_buffer_size,
+                                    reade_audio_buffer_size,
                                     0,
                                     (__bridge void *)self,
                                     ffmpeg_read_buffer,
@@ -142,8 +143,7 @@ static int ffmpeg_read_buffer(void *opaque, uint8_t *buf, int buf_size){
         NSLog(@"无法打开源....");
         return;
     }
-//    NSString *path = [[NSBundle mainBundle] pathForResource:@"林俊杰-爱不会绝迹.aac" ofType:nil];
-//    if (avformat_open_input(&_formatCtx, [path UTF8String], NULL, NULL)) {
+//    if (avformat_open_input(&_formatCtx, [[[[self.dataProvider audioFile] ss_audioURL] absoluteString] UTF8String], NULL, NULL)) {
 //        NSLog(@"无法打开源....");
 //        return;
 //    }

@@ -36,8 +36,9 @@ typedef	unsigned long long		ssfile_size_t;
 //static NSInteger const ffmpeg_decode_pool_min_buffer_size = ffmpeg_audio_buffer_size * 5;
 //static NSInteger const ffmpeg_decode_pool_max_buffer_size = ffmpeg_audio_buffer_size * 10;
 //#endif
-static NSInteger const ffmpeg_audio_buffer_size = 1024;
-static NSInteger const ffmpeg_decode_pool_min_buffer_size = ffmpeg_audio_buffer_size * 5;
-static NSInteger const ffmpeg_decode_pool_max_buffer_size = ffmpeg_audio_buffer_size * 32;
+static NSInteger const reade_audio_buffer_size = 1024;
+static NSInteger const decode_pool_min_buffer_size = reade_audio_buffer_size * 10;
+static NSInteger const decode_pool_max_buffer_size = reade_audio_buffer_size * 32;
 
+static UInt32 kRenderBufferSize  = 4096 * 4;
 #endif /* SSAudioToolBoxCommon_h */
